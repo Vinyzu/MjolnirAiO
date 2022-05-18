@@ -46,7 +46,7 @@ Commercial Usage is allowed, but souce, license and copyright has to made availa
 
 - [@Vinyzu](https://github.com/Vinyzu)
 
-`If you appreciate this Repository, I would love to see you star and share this. It took a lot of effort and time to code all thos features and i originally planned to sell this project, so I´m "wasting" money for everyone´s fun ;:D.`
+`If you appreciate this Repository, I would love to see you star and share this. It took a lot of effort and time to code all of those features and i originally planned to sell this project, so I´m "wasting" money for everyone´s fun ;:D.`
 
 
 
