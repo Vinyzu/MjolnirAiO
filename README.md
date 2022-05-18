@@ -31,7 +31,7 @@ Installing Mjolnir with Python
 
 Contributions are always welcome!
 
-See [Contributing](https://github.com/Vinyzu/MjolnirAiO/blob/main/usages.md) for ways to get started.
+See [Contributing](https://github.com/Vinyzu/MjolnirAiO/blob/main/contributing.md) for ways to get started.
 
 
 
