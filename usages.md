@@ -2,7 +2,7 @@
 
 #### Generator
 
-```http
+```
   http://mjolnir.tool/generator
 ```
 
@@ -15,7 +15,7 @@
 
 #### Streamer
 
-```http
+```
   http://mjolnir.tool/streamer
 ```
 
@@ -26,7 +26,7 @@
 
 #### Liker
 
-```http
+```
   http://mjolnir.tool/liker
 ```
 
@@ -36,7 +36,7 @@
 
 #### Checker
 
-```http
+```
   http://mjolnir.tool/checker
 ```
 
