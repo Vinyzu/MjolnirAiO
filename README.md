@@ -27,6 +27,13 @@ Installing Mjolnir with Python
     
 ## Using
 [Recommended Usage](https://github.com/Vinyzu/MjolnirAiO/blob/main/usages.md)
+
+## Logging
+
+Note:
+
+This Software logs your usage. However, it just sends the amount of usage to my server, you can always delete thelines of code, and most importantly, it uses proxies so your ip is hidden. I cant tell who is when using this software, just how often everyone together uses it. Thanks if you support me by this little if you dont delete the lines. 
+
 ## Contributing
 
 Contributions are always welcome!
