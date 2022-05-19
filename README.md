@@ -34,6 +34,9 @@ Contributions are always welcome!
 See [Contributing](https://github.com/Vinyzu/MjolnirAiO/blob/main/contributing.md) for ways to get started.
 
 
+## To the Skids
+
+Hello, skid. I know its in your nature to laboriously copy and paste this project and sell it as yours. And i can´t 100% prevent that. However, legally you arent allowed to share your skidded Mjolnir other than the source code. And i know that you give a fuck about Licenses and Copyright, but if you gonna use this code as yours and don´t mark me as the original author, i can asure you that you won´t have a good time selling this ;d.
 
 ## Copyright and License
 © [Vinyzu](https://github.com/Vinyzu/)
