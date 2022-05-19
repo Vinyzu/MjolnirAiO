@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    <meta charset="utf-8">
+    <title>Mjolnir AiO Tool</title>
+    <link rel="icon" href="https://i.ibb.co/f49G2GL/Spotify-Logo.png">
+  </head>
+  <body>
+    <div id="mySidenav" class="sidenav">
+      <a href="http://mjolnir.tool/generator">Generator</a>
+      <a href="http://mjolnir.tool/streamer">Streamer</a>
+      <a href="http://mjolnir.tool/liker">Liker</a>
+      <a href="http://mjolnir.tool/checker">Checker</a>
+      <a href="http://mjolnir.tool/combo">ComboEditor</a>
+    </div>
+    <div class="title">
+      <h1>Checker</h1>
+    </div>
+    <div class="selection">
+      <br><br>
+      <input type="submit" value="Checker (Slow)" id="checker"><br><br>
+      <input type="submit" value="Mail Checker (Fast)" id="mchecker"><br><br>
+    </div>
+    <div class="content">
+      <br><br>
+      <label for="threads">Threads:   </label><input type="text" id="threads" name="threads" value="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"><br><br>
+      <label for="threads">Use Proxies:   </label>
+      <label class="switch"><input type="checkbox" id="proxy-switch"><span class="slider round"></span></label><br><br>
+      <div class="proxy-select", id="div-proxy-select">
+        <label for="gender">Select a Proxy-Type:   </label>
+          <select name="proxy" id="proxy-select">
+            <option value="residential">Residential</option>
+            <option value="datacenter">Datacenter</option>
+          </select><br><br>
+      </div>
+      <!-- <label for="threads">Time between Likes:   </label><input type="text" id="timeout" name="timeout" value="5"><br><br> -->
+      <label for="amount">Maximum Timeout:   </label><input type="text" id="max" name="max" value="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"><br>
+      <label for="amount" style="font-size: 15px; color: #545454;">In Seconds</label><br><br>
+      <label for="amount">Combo Path:   </label><input type="text" id="combo" name="combo" value=""><br><br>
+      <input type="submit" value="Submit" id="submit"><br><br>
+      <input type="file" id="logo">
+      <br><br>
+      <label for="logs" id="logs">Logs:</label><br><br>
+      <textarea id="textarea" name="textarea" rows="4" cols="50" readonly></textarea>
+    </div>
+    <div class="content">
+      <br><br>
+      <label for="threads">Threads:   </label><input type="text" id="r_threads" name="threads" value="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"><br><br>
+      <label for="threads">Use Proxies:   </label>
+      <label class="switch"><input type="checkbox" id="r_proxy-switch"><span class="slider round"></span></label><br><br>
+      <!-- <label for="threads">Time between Likes:   </label><input type="text" id="timeout" name="timeout" value="5"><br><br> -->
+      <label for="amount">Maximum Timeout:   </label><input type="text" id="r_max" name="max" value="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"><br>
+      <label for="amount" style="font-size: 15px; color: #545454;">In Seconds</label><br><br>
+      <label for="amount">Combo Path:   </label><input type="text" id="r_combo" name="combo" value=""><br><br>
+      <input type="submit" value="Submit" id="r_submit"><br><br>
+      <input type="file" id="r_logo">
+      <br><br>
+      <label for="logs" id="r_logs">Logs:</label><br><br>
+      <textarea id="r_textarea" name="textarea" rows="4" cols="50" readonly></textarea>
+    </div>
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script>
+    document.getElementsByClassName("content")[0].style.display = 'none';
+    document.getElementsByClassName("content")[1].style.display = 'none';
+    document.getElementById("checker").onclick = function(e) {document.getElementsByClassName("content")[0].style.display = 'block'; document.getElementsByClassName("selection")[0].style.display = 'none';}
+    document.getElementById("mchecker").onclick = function(e) {document.getElementsByClassName("content")[1].style.display = 'block'; document.getElementsByClassName("selection")[0].style.display = 'none';}
+    // r_
+    $("#textarea").css('opacity','0');
+    $("#logs").css('opacity','0');
+    $("#r_textarea").css('opacity','0');
+    $("#r_logs").css('opacity','0');
+    window.setInterval(function() {var elem = document.getElementById('textarea'); elem.scrollTop = elem.scrollHeight;}, 1000);
+    window.setInterval(function() {var elem = document.getElementById('r_textarea'); elem.scrollTop = elem.scrollHeight;}, 1000);
+    var proxies = "";
+    $("#logo").css('opacity','0');
+    document.getElementsByClassName("proxy-select")[0].style.display = 'none';
+    document.getElementById("proxy-switch").onclick = function(e){if (! document.getElementById("proxy-switch").checked) {document.getElementById("proxy-switch").checked = false; proxies = ""; document.getElementsByClassName("proxy-select")[0].style.display = 'none';} else {$("#logo").trigger('click');}};
+    $('#logo').change( function(event) {
+      var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
+      xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){proxies = e.srcElement.result;}); myReader.readAsText(blob);}};
+      xhr.send();
+      document.getElementsByClassName("proxy-select")[0].style.display = 'block';});
+
+    document.getElementById("submit").onclick = function(e){
+      $.ajax({
+        type: "POST",
+        url: "{{ url_for("checker") }}",
+        contentType: "application/json",
+        data: JSON.stringify({
+          // timeout: document.getElementById("timeout").value,
+          threads: document.getElementById("threads").value,
+          proxies: proxies,
+          proxy_type: document.getElementById("proxy-select").value,
+          max: document.getElementById("max").value,
+          path: document.getElementById("combo").value,
+        }),
+        success: function(res) {
+          console.log(res);
+          const socket = new WebSocket(res);
+          socket.addEventListener('open', () => {
+              console.log('Connection established');
+                socket.send("Update");
+              }
+          );
+          socket.addEventListener('message', event => {
+              console.log('Message from server ', event.data);
+              document.getElementById('textarea').value += event.data + "\r\n";
+              // document.getElementById('textarea').value = event.data;
+              $("#textarea").css('opacity','100');
+              $("#logs").css('opacity','100');
+          });
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    });
+    }
+
+    var r_proxies = "";
+    $("#r_logo").css('opacity','0');
+    document.getElementById("r_proxy-switch").onclick = function(e){if (! document.getElementById("r_proxy-switch").checked) {document.getElementById("r_proxy-switch").checked = false; r_proxies = "";} else {$("#r_logo").trigger('click');}};
+    $('#logo').change( function(event) {
+      var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
+      xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){r_proxies = e.srcElement.result;}); myReader.readAsText(blob);}};
+      xhr.send();});
+
+    document.getElementById("r_submit").onclick = function(e){
+      $.ajax({
+        type: "POST",
+        url: "{{ url_for("mchecker") }}",
+        contentType: "application/json",
+        data: JSON.stringify({
+          // timeout: document.getElementById("timeout").value,
+          threads: document.getElementById("r_threads").value,
+          proxies: r_proxies,
+          max: document.getElementById("r_max").value,
+          path: document.getElementById("r_combo").value,
+        }),
+        success: function(res) {
+          console.log(res);
+          const socket = new WebSocket(res);
+          socket.addEventListener('open', () => {
+              console.log('Connection established');
+                socket.send("Update");
+              }
+          );
+          socket.addEventListener('message', event => {
+              console.log('Message from server ', event.data);
+              document.getElementById('r_textarea').value += event.data + "\r\n";
+              // document.getElementById('textarea').value = event.data;
+              $("#r_textarea").css('opacity','100');
+              $("#r_logs").css('opacity','100');
+          });
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    });
+    }
+    </script>
+</html>

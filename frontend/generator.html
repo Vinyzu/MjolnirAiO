@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    <meta charset="utf-8">
+    <title>Mjolnir AiO Tool</title>
+    <link rel="icon" href="https://i.ibb.co/f49G2GL/Spotify-Logo.png">
+  </head>
+  <body>
+    <div id="mySidenav" class="sidenav">
+      <a href="http://mjolnir.tool/generator">Generator</a>
+      <a href="http://mjolnir.tool/streamer">Streamer</a>
+      <a href="http://mjolnir.tool/liker">Liker</a>
+      <a href="http://mjolnir.tool/checker">Checker</a>
+      <a href="http://mjolnir.tool/combo">ComboEditor</a>
+    </div>
+    <div class="title">
+      <h1>Generator</h1>
+    </div>
+    <div class="selection">
+      <br><br>
+      <input type="submit" value="Desktop Generator" id="desktop"><br><br>
+      <input type="submit" value="Web Generator" id="web"><br><br>
+      <input type="submit" value="Request Generator" id="request"><br><br>
+    </div>
+    <div class="content">
+      <label for="amount" style="font-size: 15px; color: #545454;">Desktop-Generator</label><br><br>
+      <br><br>
+      <label for="amount">Amount:   </label><input type="text" id="amount" name="amount" value="1" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"><br><br>
+      <label for="threads">Threads:   </label><input type="text" id="threads" name="threads" value="1" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"><br><br>
+      <label for="threads">Use Own Names:   </label>
+      <label class="switch"><input type="checkbox" id="name-switch"><span class="slider round"></span></label><br><br>
+      <label for="threads">Use Own Passwords:   </label>
+      <label class="switch"><input type="checkbox" id="password-switch"><span class="slider round"></span></label><br><br>
+      <label for="threads">Use Proxies:   </label>
+      <label class="switch"><input type="checkbox" id="proxy-switch"><span class="slider round"></span></label><br><br>
+      <label for="threads">Use a Webhook:   </label>
+      <label class="switch"><input type="checkbox" id="webhook-switch"><span class="slider round"></span></label><br><br>
+      <label for="gender">Select a gender:   </label>
+        <select name="gender" id="gender-select">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="none">NonBinary</option>
+        </select><br><br>
+      <label for="order">Select a date-order:   </label>
+        <select name="order" id="order-select">
+          <option value="day">Day-Month-Year</option>
+          <option value="month">Month-Day-Year</option>
+        </select><br><br>
+      <label for="threads">Minimal Age:   </label><input type="text" id="minAge" name="minAge" value="1970" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"><br><br>
+      <label for="threads">Maximal Age:   </label><input type="text" id="maxAge" name="maxAge" value="1980" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"><br><br>
+      <label for="threads">Alternative Month Selection:   </label>
+      <label class="switch"><input type="checkbox" id="alternative-switch"><span class="slider round"></span></label><br>
+      <label for="amount" style="font-size: 15px; color: #545454;">Use only when told by Support</label><br><br>
+      <label for="amount">Output Path:   </label><input type="text" id="path" name="path" value=""><br><br>
+      <input type="submit" value="Submit" id="submit"><br><br>
+      <input type="file" id="logo">
+      <input type="file" id="logo1">
+      <input type="file" id="logo2">
+      <br><br>
+      <label for="logs" id="logs">Logs:</label><br><br>
+      <textarea id="textarea" name="textarea" rows="4" cols="50" readonly></textarea>
+    </div>
+    <div class="content">
+      <label for="amount" style="font-size: 15px; color: #545454;">Web-Generator</label><br><br>
+      <br><br>
+      <label for="amount">Amount:   </label><input type="text" id="w_amount" name="w_amount" value="1" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"><br><br>
+      <label for="threads">Threads:   </label><input type="text" id="w_threads" name="w_threads" value="1" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"><br><br>
+      <label for="threads">Use Own Names:   </label>
+      <label class="switch"><input type="checkbox" id="w_name-switch"><span class="slider round"></span></label><br><br>
+      <label for="threads">Use Own Passwords:   </label>
+      <label class="switch"><input type="checkbox" id="w_password-switch"><span class="slider round"></span></label><br><br>
+      <label for="threads">Use Proxies:   </label>
+      <label class="switch"><input type="checkbox" id="w_proxy-switch"><span class="slider round"></span></label><br><br>
+      <label for="gender">Select a gender:   </label>
+        <select name="gender" id="w_gender-select">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="none">NonBinary</option>
+        </select><br><br>
+      <label for="threads">Minimal Age:   </label><input type="text" id="w_minAge" name="minAge" value="1970" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"><br><br>
+      <label for="threads">Maximal Age:   </label><input type="text" id="w_maxAge" name="maxAge" value="1980" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"><br><br>
+      <label for="threads">2Captcha Key:   </label><input type="text" id="w_key" name="w_key" value=""><br><br>
+      <label for="amount">Output Path:   </label><input type="text" id="w_path" name="path" value=""><br><br>
+      <input type="submit" value="Submit" id="w_submit"><br><br>
+      <input type="file" id="w_logo">
+      <input type="file" id="w_logo1">
+      <input type="file" id="w_logo2">
+      <br><br>
+      <label for="logs" id="w_logs">Logs:</label><br><br>
+      <textarea id="w_textarea" name="w_textarea" rows="4" cols="50" readonly></textarea>
+    </div>
+    <div class="content">
+      <label for="amount" style="font-size: 15px; color: #545454;">Request-Generator</label><br><br>
+      <br><br>
+      <label for="amount">Amount:   </label><input type="text" id="r_amount" name="r_amount" value="1" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"><br><br>
+        <label for="threads">Threads:   </label><input type="text" id="r_threads" name="r_threads" value="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"><br><br>
+      <label for="threads">Use Own Names:   </label>
+      <label class="switch"><input type="checkbox" id="r_name-switch"><span class="slider round"></span></label><br><br>
+      <label for="threads">Use Own Passwords:   </label>
+      <label class="switch"><input type="checkbox" id="r_password-switch"><span class="slider round"></span></label><br><br>
+      <label for="threads">Use Proxies:   </label>
+      <label class="switch"><input type="checkbox" id="r_proxy-switch"><span class="slider round"></span></label><br><br>
+      <label for="amount">Output Path:   </label><input type="text" id="r_path" name="r_path" value=""><br><br>
+      <input type="submit" value="Submit" id="r_submit"><br><br>
+      <input type="file" id="r_logo">
+      <input type="file" id="r_logo1">
+      <input type="file" id="r_logo2">
+      <br><br>
+      <label for="logs" id="r_logs">Logs:</label><br><br>
+      <textarea id="r_textarea" name="r_textarea" rows="4" cols="50" readonly></textarea>
+    </div>
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script>
+    $("#textarea").css('opacity','0');
+    window.setInterval(function() {var elem = document.getElementById('textarea'); elem.scrollTop = elem.scrollHeight;}, 1000);
+    $("#r_textarea").css('opacity','0');
+    window.setInterval(function() {var elem = document.getElementById('r_textarea'); elem.scrollTop = elem.scrollHeight;}, 1000);
+    $("#w_textarea").css('opacity','0');
+    window.setInterval(function() {var elem = document.getElementById('w_textarea'); elem.scrollTop = elem.scrollHeight;}, 1000);
+    $("#w_logs").css('opacity','0');
+    $("#logs").css('opacity','0');
+    $("#r_logs").css('opacity','0');
+    var names = "";
+    $("#logo").css('opacity','0');
+    document.getElementById("name-switch").onclick = function(e){if (! document.getElementById("name-switch").checked) {document.getElementById("name-switch").checked = false; names = "";} else {$("#logo").trigger('click');}};
+    $('#logo').change( function(event) {
+      var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
+      xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){names = e.srcElement.result;}); myReader.readAsText(blob);}};
+      xhr.send();
+      document.getElementById("name-switch").checked = true;});
+
+    var passwords = "";
+    $("#logo1").css('opacity','0');
+    document.getElementById("password-switch").onclick = function(e){if (! document.getElementById("password-switch").checked) {document.getElementById("password-switch").checked = false; passwords = "";} else {$("#logo1").trigger('click');}};
+    $('#logo1').change( function(event) {
+      var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
+      xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){passwords = e.srcElement.result;}); myReader.readAsText(blob);}};
+      xhr.send();
+      document.getElementById("password-switch").checked = true;});
+
+    var proxies = "";
+    $("#logo2").css('opacity','0');
+    document.getElementById("proxy-switch").onclick = function(e){if (! document.getElementById("proxy-switch").checked) {document.getElementById("proxy-switch").checked = false; proxies = "";} else {$("#logo2").trigger('click');}};
+    $('#logo2').change( function(event) {
+      var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
+      xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){proxies = e.srcElement.result;}); myReader.readAsText(blob);}};
+      xhr.send();
+      document.getElementById("proxy-switch").checked = true;});
+
+    var webhook = "";
+    document.getElementById("webhook-switch").onclick = function(e){
+      if (! document.getElementById("webhook-switch").checked) {
+        console.log("bad");
+        document.getElementById("webhook-switch").checked = false; webhook = "";
+      } else {
+        console.log("good");
+        var url = prompt("Please enter your webhook:", "");
+        if (! url.includes("https")) {
+          alert("The Webhook-Url was invalid!");
+          document.getElementById("webhook-switch").checked = false;
+        } else {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.responseType = 'json';
+        xhr.onload  = function(e) {console.log(xhr.response);
+        if(xhr.response.hasOwnProperty('message')){alert("The Webhook-Url was invalid!"); document.getElementById("webhook-switch").checked = false;
+          } else {webhook = url;}}
+        xhr.send();
+      }}};
+    document.getElementById("submit").onclick = function(e){
+        url = $.ajax({
+          type: "POST",
+          url: "{{ url_for("dgen") }}",
+          contentType: "application/json",
+          data: JSON.stringify({
+            amount: document.getElementById("amount").value,
+            threads: document.getElementById("threads").value,
+            names: names,
+            passwords: passwords,
+            proxies: proxies,
+            webhook: webhook,
+            gender: document.getElementById("gender-select").value,
+            order: document.getElementById("order-select").value,
+            alternative: document.getElementById("alternative-switch").checked,
+            minAge: document.getElementById("minAge").value,
+            maxAge: document.getElementById("maxAge").value,
+            path: document.getElementById("path").value,
+          }),
+          success: function(res) {
+            console.log(res);
+            const socket = new WebSocket(res);
+            socket.addEventListener('open', () => {
+                console.log('Connection established');
+                  socket.send("Update");
+                }
+            );
+            socket.addEventListener('message', event => {
+                console.log('Message from server ', event.data);
+                document.getElementById('textarea').value += event.data + "\r\n";
+                // document.getElementById('textarea').value = event.data;
+                $("#textarea").css('opacity','100');
+                $("#logs").css('opacity','100');
+            });
+
+      },
+      error: function(err){console.log(err);}})
+    }
+
+
+    var w_names = "";
+    $("#w_logo").css('opacity','0');
+    document.getElementById("name-switch").onclick = function(e){if (! document.getElementById("w_name-switch").checked) {document.getElementById("w_name-switch").checked = false; w_names = "";} else {$("#w_logo").trigger('click');}};
+    $('#w_logo').change( function(event) {
+      var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
+      xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){w_names = e.srcElement.result;}); myReader.readAsText(blob);}};
+      xhr.send();
+      document.getElementById("w_name-switch").checked = true;});
+
+    var w_passwords = "";
+    $("#w_logo1").css('opacity','0');
+    document.getElementById("password-switch").onclick = function(e){if (! document.getElementById("w_password-switch").checked) {document.getElementById("w_password-switch").checked = false; w_passwords = "";} else {$("#w_logo1").trigger('click');}};
+    $('#w_logo1').change( function(event) {
+      var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
+      xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){w_passwords = e.srcElement.result;}); myReader.readAsText(blob);}};
+      xhr.send();
+      document.getElementById("w_password-switch").checked = true;});
+
+    var w_proxies = "";
+    $("#w_logo2").css('opacity','0');
+    document.getElementById("proxy-switch").onclick = function(e){if (! document.getElementById("w_proxy-switch").checked) {document.getElementById("w_proxy-switch").checked = false; w_proxies = "";} else {$("#w_logo2").trigger('click');}};
+    $('#w_logo2').change( function(event) {
+      var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
+      xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){w_proxies = e.srcElement.result;}); myReader.readAsText(blob);}};
+      xhr.send();
+      document.getElementById("w_proxy-switch").checked = true;});
+
+    document.getElementById("w_submit").onclick = function(e){
+          url = $.ajax({
+            type: "POST",
+            url: "{{ url_for("wgen") }}",
+            contentType: "application/json",
+            data: JSON.stringify({
+              amount: document.getElementById("w_amount").value,
+              threads: document.getElementById("w_threads").value,
+              names: w_names,
+              passwords: w_passwords,
+              proxies: w_proxies,
+              gender: document.getElementById("w_gender-select").value,
+              minAge: document.getElementById("w_minAge").value,
+              maxAge: document.getElementById("w_maxAge").value,
+              key: document.getElementById("w_key").value,
+              path: document.getElementById("w_path").value,
+            }),
+            success: function(res) {
+              console.log(res);
+              const socket = new WebSocket(res);
+              socket.addEventListener('open', () => {
+                  console.log('Connection established');
+                    socket.send("Update");
+                  }
+              );
+              socket.addEventListener('message', event => {
+                  console.log('Message from server ', event.data);
+                  document.getElementById('w_textarea').value += event.data + "\r\n";
+                  // document.getElementById('textarea').value = event.data;
+                  $("#w_textarea").css('opacity','100');
+                  $("#w_logs").css('opacity','100');
+              });
+
+        },
+        error: function(err){console.log(err);}})
+      }
+
+    document.getElementsByClassName("content")[0].style.display = 'none';
+    document.getElementsByClassName("content")[1].style.display = 'none';
+    document.getElementsByClassName("content")[2].style.display = 'none';
+    document.getElementById("desktop").onclick = function(e) {document.getElementsByClassName("content")[0].style.display = 'block'; document.getElementsByClassName("selection")[0].style.display = 'none';}
+    document.getElementById("web").onclick = function(e) {document.getElementsByClassName("content")[1].style.display = 'block'; document.getElementsByClassName("selection")[0].style.display = 'none';}
+    document.getElementById("request").onclick = function(e) {document.getElementsByClassName("content")[2].style.display = 'block'; document.getElementsByClassName("selection")[0].style.display = 'none';}
+
+
+
+    var r_names = "";
+    $("#r_logo").css('opacity','0');
+    document.getElementById("r_name-switch").onclick = function(e){if (! document.getElementById("r_name-switch").checked) {document.getElementById("r_name-switch").checked = false; r_names = "";} else {$("#r_logo").trigger('click');}};
+    $('#r_logo').change( function(event) {
+      var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
+      xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){r_names = e.srcElement.result;}); myReader.readAsText(blob);}};
+      xhr.send();
+      document.getElementById("r_name-switch").checked = true;});
+
+    var r_passwords = "";
+    $("#r_logo1").css('opacity','0');
+    document.getElementById("r_password-switch").onclick = function(e){if (! document.getElementById("r_password-switch").checked) {document.getElementById("r_password-switch").checked = false; r_passwords = "";} else {$("#r_logo1").trigger('click');}};
+    $('#r_logo1').change( function(event) {
+      var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
+      xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){r_passwords = e.srcElement.result;}); myReader.readAsText(blob);}};
+      xhr.send();
+      document.getElementById("r_password-switch").checked = true;});
+
+    var r_proxies = "";
+    $("#r_logo2").css('opacity','0');
+    document.getElementById("r_proxy-switch").onclick = function(e){if (! document.getElementById("r_proxy-switch").checked) {document.getElementById("r_proxy-switch").checked = false; r_proxies = "";} else {$("#r_logo2").trigger('click');}};
+    $('#r_logo2').change( function(event) {
+      var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
+      xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){r_proxies = e.srcElement.result;}); myReader.readAsText(blob);}};
+      xhr.send();
+      document.getElementById("r_proxy-switch").checked = true;});
+
+      document.getElementById("r_submit").onclick = function(e){
+        url = $.ajax({
+          type: "POST",
+          url: "{{ url_for("rgen") }}",
+          contentType: "application/json",
+          data: JSON.stringify({
+            amount: document.getElementById("r_amount").value,
+            threads: document.getElementById("r_threads").value,
+            names: r_names,
+            passwords: r_passwords,
+            proxies: r_proxies,
+            path: document.getElementById("r_path").value,
+          }),
+          success: function(res) {
+            console.log(res);
+            const socket = new WebSocket(res);
+            socket.addEventListener('open', () => {
+                console.log('Connection established');
+                  socket.send("Update");
+                }
+            );
+            socket.addEventListener('message', event => {
+                console.log('Message from server ', event.data);
+                document.getElementById('r_textarea').value += event.data + "\r\n";
+                // document.getElementById('textarea').value = event.data;
+                $("#r_textarea").css('opacity','100');
+                $("#r_logs").css('opacity','100');
+            });
+
+      },
+    })}
+    </script>
+</html>

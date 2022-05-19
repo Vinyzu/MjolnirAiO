@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    <meta charset="utf-8">
+    <title>Mjolnir AiO Tool</title>
+    <link rel="icon" href="https://i.ibb.co/f49G2GL/Spotify-Logo.png">
+  </head>
+  <body>
+    <div id="mySidenav" class="sidenav">
+      <a href="http://mjolnir.tool/generator">Generator</a>
+      <a href="http://mjolnir.tool/streamer">Streamer</a>
+      <a href="http://mjolnir.tool/liker">Liker</a>
+      <a href="http://mjolnir.tool/checker">Checker</a>
+      <a href="http://mjolnir.tool/combo">ComboEditor</a>
+    </div>
+    <div class="title">
+      <h1>Liker</h1>
+    </div>
+    <div class="content">
+      <br><br>
+      <label for="amount">Combo Path:   </label><input type="text" id="combo" name="combo" value=""><br><br>
+      <label for="amount">Output File Name:   </label><input type="text" id="name" name="name" value=""><br><br>
+      <input type="submit" value="Submit" id="submit"><br><br>
+      <input type="file" id="logo">
+    </div>
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script>
+    document.getElementById("submit").onclick = function(e){
+      $.ajax({
+        type: "POST",
+        url: "{{ url_for("wgen") }}",
+        contentType: "application/json",
+        data: JSON.stringify({
+          combo: document.getElementById("combo").value,
+          name: document.getElementById("name").value,
+        }),
+        dataType: "json",
+        success: function(response) {
+            console.log(response);
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    });
+    }
+    </script>
+</html>
