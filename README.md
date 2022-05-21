@@ -16,7 +16,7 @@ All of its features are open source and free to use.
 
 ## Installation
 
-Installing Mjolnir with Python
+`Installing Mjolnir with Python`
 
 ```bash
   git clone git:github.com/Vinyzu/MjolnirAiO MjolnirAiO
@@ -24,7 +24,13 @@ Installing Mjolnir with Python
   pip install -r requirements.txt
   python mjolnir.py
 ```
-    
+
+`Further Requirements`
+
+-Windows
+-Install [Spotify](https://www.spotify.com/download/windows/)
+-Install [Sandboxie](https://sandboxie-plus.com/downloads/)
+
 ## Using
 [Recommended Usage](https://github.com/Vinyzu/MjolnirAiO/blob/main/usages.md)
 
