@@ -8,7 +8,7 @@ pywinauto
 ctypes
 requests
 websocket
-proxy
+proxy.py
 psutil
 tempfile
 logging
