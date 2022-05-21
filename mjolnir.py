@@ -1097,6 +1097,7 @@ def dgen():
     amount, threads, names, passwords, proxies, webhook, gender, order, minAge, maxAge, alternative, output_path = request.json.get("amount"), request.json.get("threads"), request.json.get("names"), request.json.get("passwords"), request.json.get("proxies"), request.json.get("webhook"), request.json.get("gender"), request.json.get("order"), request.json.get("minAge"), request.json.get("maxAge"), request.json.get("alternative"), request.json.get("path")
     path = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
     paths[path] = ["[INFO] Started Generator"]
+    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
     generator = DesktopGenerator(path, proxies, minAge, maxAge, gender, order, alternative)
     threading.Thread(target=generator.generator, args=(amount, names, passwords, threads, output_path, webhook)).start()
     return f"ws://mjolnir.tool/websockets?ws={path}"
@@ -1106,6 +1107,7 @@ def wgen():
     amount, threads, key, names, passwords, proxies, gender, minAge, maxAge, output_path = request.json.get("amount"), request.json.get("threads"), request.json.get("key"), request.json.get("names"), request.json.get("passwords"), request.json.get("proxies"), request.json.get("gender"), request.json.get("minAge"), request.json.get("maxAge"), request.json.get("path")
     path = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
     paths[path] = ["[INFO] Started Generator"]
+    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
     generator = WebGenerator(amount, threads, key, names, passwords, output_path, path, proxies, minAge, maxAge, gender)
     threading.Thread(target=generator.generator).start()
     return f"ws://mjolnir.tool/websockets?ws={path}"
@@ -1116,6 +1118,7 @@ def rgen():
     path = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
     if not output_path: paths[path] = ["[INFO] Invalid Output Path"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     paths[path] = ["[INFO] Started Generator"]
+    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
     generator = RequestGenerator(path, proxies)
     threading.Thread(target=generator.generator, args=(amount, threads, names, passwords, output_path)).start()
     return f"ws://mjolnir.tool/websockets?ws={path}"
@@ -1127,6 +1130,7 @@ def dstream():
     if not link or "https://" not in link or "spotify" not in link: paths[path] = ["[INFO] Invalid Spotify URL"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     if not combo_path: paths[path] = ["[INFO] Invalid Combo Path"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     paths[path] = ["[INFO] Started Streamer"]
+    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
     streamer = DesktopStreamer(combo_path, threads, proxies, link, max, like, follow, mute, pos, webhook, path)
     threading.Thread(target=streamer.streamer).start()
     return f"ws://mjolnir.tool/websockets?ws={path}"
@@ -1138,6 +1142,7 @@ def wstream():
     if not link or "https://" not in link or "spotify" not in link: paths[path] = ["[INFO] Invalid Spotify URL"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     if not combo_path: paths[path] = ["[INFO] Invalid Combo Path"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     paths[path] = ["[INFO] Started Streamer"]
+    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
     streamer = WebStreamer(combo_path, threads, proxies, link, max, like, pos, webhook, path)
     threading.Thread(target=streamer.streamer).start()
     return f"ws://mjolnir.tool/websockets?ws={path}"
@@ -1149,6 +1154,7 @@ def liker():
     if not link or "https://" not in link or "spotify" not in link: paths[path] = ["[INFO] Invalid Spotify URL"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     if not combo_path: paths[path] = ["[INFO] Invalid Combo Path"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     paths[path] = ["[INFO] Started Liker"]
+    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
     if not timeout: paths[path] += "[INFO] Invalid Timeout, using 10"
     liker = Liker(link, threads, timeout, proxies, proxy_type, combo_path, path)
     threading.Thread(target=liker.liker).start()
@@ -1160,6 +1166,7 @@ def checker():
     path = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
     if not combo_path: paths[path] = ["[INFO] Invalid Combo Path"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     paths[path] = ["[INFO] Started Checker"]
+    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
     if not max: paths[path] += "[INFO] Invalid Maximum, using 5"
     checker = Checker(threads, proxies, proxy_type, max, combo_path, path)
     threading.Thread(target=checker.checker).start()
@@ -1171,6 +1178,7 @@ def mchecker():
     path = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
     if not combo_path: paths[path] = ["[INFO] Invalid Combo Path"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     paths[path] = ["[INFO] Started Checker"]
+    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
     if not max: paths[path] += "[INFO] Invalid Maximum, using 5"
     checker = MailChecker(threads, proxies, max, combo_path, path)
     threading.Thread(target=checker.checker).start()
