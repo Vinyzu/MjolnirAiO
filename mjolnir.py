@@ -92,7 +92,8 @@ class DesktopGenerator:
 
     def generator(self, amount, names, passwords, threads, output_path, webhook_url):
         #Logging to server
-        requests.post(f"{server}/generator/desktop", json={"amount": amount}, proxies=urllib.request.getproxies())
+        try: requests.post(f"{server}/generator/desktop", json={"amount": amount}, proxies=urllib.request.getproxies())
+        except: pass
         #Setting Variable if not set (Maybe Temp)
         names = requests.get("https://raw.githubusercontent.com/jeanphorn/wordlist/master/usernames.txt").text.splitlines() if not names else names.split("\r\n")
         passwords = requests.get("https://raw.githubusercontent.com/berzerk0/Probable-Wordlists/master/Real-Passwords/WPA-Length/Top4800-WPA-probable-v2.txt").text.splitlines() if not passwords else passwords.split("\r\n")
@@ -339,7 +340,8 @@ class WebGenerator:
 
     def generator(self):
         #Logging to server
-        requests.post(f"{server}/generator/web", json={"amount": self.amount}, proxies=urllib.request.getproxies())
+        try: requests.post(f"{server}/generator/web", json={"amount": self.amount}, proxies=urllib.request.getproxies())
+        except: pass
         #Local Values
         while self.count < self.amount:
             self.current_failed, self.waiting = 0, 0
@@ -502,7 +504,8 @@ class RequestGenerator:
 
     def generator(self, amount, threads, names, passwords, output_path):
         #Logging to server
-        requests.post(f"{server}/generator/request", json={"amount": amount}, proxies=urllib.request.getproxies())
+        try: requests.post(f"{server}/generator/request", json={"amount": amount}, proxies=urllib.request.getproxies())
+        except: pass
         names = requests.get("https://raw.githubusercontent.com/jeanphorn/wordlist/master/usernames.txt").text.splitlines() if not names else names.split("\r\n")
         passwords = requests.get("https://raw.githubusercontent.com/berzerk0/Probable-Wordlists/master/Real-Passwords/WPA-Length/Top4800-WPA-probable-v2.txt").text.splitlines() if not passwords else passwords.split("\r\n")
         threads = 10 if not threads else int(threads)
@@ -566,7 +569,8 @@ class Liker:
     def liker(self):
         combos = open(self.combo_path, "r").read().splitlines()
         #Logging to server
-        requests.post(f"{server}/liker", json={"amount": len(combos)}, proxies=urllib.request.getproxies())
+        try: requests.post(f"{server}/liker", json={"amount": len(combos)}, proxies=urllib.request.getproxies())
+        except: pass
         if any(self.proxies): threading.Thread(target=self.proxy_pool).start() #Spawning ProxyPool on Port 8899
         while self.count < len(combos):
             for i in range(int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads):
@@ -631,7 +635,8 @@ class Checker:
     def checker(self):
         combos = open(self.combo_path, "r").read().splitlines()
         #Logging to server
-        requests.post(f"{server}/checker", json={"amount": len(combos)}, proxies=urllib.request.getproxies())
+        try: requests.post(f"{server}/checker", json={"amount": len(combos)}, proxies=urllib.request.getproxies())
+        except: pass
         if any(self.proxies): threading.Thread(target=self.proxy_pool).start() #Spawning ProxyPool on Port 8899
         while self.count < len(combos):
             threadz = range(int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads)
@@ -687,7 +692,8 @@ class MailChecker:
     def checker(self):
         combos = open(self.combo_path, "r").read().splitlines()
         #Logging to server
-        requests.post(f"{server}/mailchecker", json={"amount": len(combos)}, proxies=urllib.request.getproxies())
+        try: requests.post(f"{server}/mailchecker", json={"amount": len(combos)}, proxies=urllib.request.getproxies())
+        except: pass
         while self.count < len(combos):
             threadz = range(int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads)
             for i in threadz:
@@ -774,7 +780,8 @@ class DesktopStreamer:
         #Local Values
         combo, count, self.current_streaming = open(self.combo_path, "r").read().splitlines(), 0, True
         #Logging to server
-        requests.post(f"{server}/streamer/desktop", json={"amount": len(combo)}, proxies=urllib.request.getproxies())
+        try: requests.post(f"{server}/streamer/desktop", json={"amount": len(combo)}, proxies=urllib.request.getproxies())
+        except: pass
         combo = [x for x in combo if x]
         if any(self.proxies): threading.Thread(target=self.proxy_pool).start() #Spawning ProxyPool on Port 8899
         else: log(self.websocket_url, "[PROXY] No proxy server will be used")
@@ -1008,7 +1015,8 @@ class WebStreamer:
     def streamer(self):
         combos = open(self.combo_path, "r").read().splitlines()
         #Logging to serverq
-        requests.post(f"{server}/streamer/web", json={"amount": len(combos)}, proxies=urllib.request.getproxies())
+        try: requests.post(f"{server}/streamer/web", json={"amount": len(combos)}, proxies=urllib.request.getproxies())
+        except: pass
         if any(self.proxies): threading.Thread(target=self.proxy_pool).start() #Spawning ProxyPool on Port 8899
         while self.count < len(combos):
             for i in range(int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads):
