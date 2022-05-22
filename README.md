@@ -56,7 +56,7 @@ Hello, skid. I know its in your nature to laboriously copy and paste this projec
 
 [GNU GPL](https://choosealicense.com/licenses/gpl-3.0/)
 
-Commercial Usage is allowed, but souce, license and copyright has to made available. Mjolnir does not provide and Liability or Warranty)
+(Commercial Usage is allowed, but souce, license and copyright has to made available. Mjolnir does not provide and Liability or Warranty)
 
 ## Authors
 
