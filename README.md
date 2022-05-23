@@ -13,6 +13,9 @@ All of its features are open source and free to use.
 - Liker
 - Web / Mail Checker
 
+### Demo Video (Showing Desktop Generator and Streamer)
+
+https://user-images.githubusercontent.com/50874994/169865287-4c7a14e5-00f3-4fd8-b40d-1daebab524b7.mp4
 
 ## Installation
 
