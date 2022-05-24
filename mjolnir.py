@@ -56,7 +56,7 @@ class DesktopGenerator:
             return False
         if not os.path.isdir("C:\Sandbox"):
             log(self.websocket_url, "[INSTALLATION] You have to install Sandboxie!")
-            webbrowser.open("https://sandboxie-plus.com/downloads/")
+            webbrowser.open("https://github.com/sandboxie-plus/Sandboxie/releases/download/1.0.22/Sandboxie-Classic-x64-v5.55.22.exe")
             return False
         return True
 
@@ -95,6 +95,7 @@ class DesktopGenerator:
         try: requests.post(f"{server}/generator/desktop", json={"amount": amount}, proxies=urllib.request.getproxies())
         except: pass
         #Setting Variable if not set (Maybe Temp)
+        output_path = output_path.replace('"', "")
         names = requests.get("https://raw.githubusercontent.com/jeanphorn/wordlist/master/usernames.txt").text.splitlines() if not names else names.split("\r\n")
         passwords = requests.get("https://raw.githubusercontent.com/berzerk0/Probable-Wordlists/master/Real-Passwords/WPA-Length/Top4800-WPA-probable-v2.txt").text.splitlines() if not passwords else passwords.split("\r\n")
         output_path = "output.txt" if not output_path else output_path
@@ -743,7 +744,7 @@ class DesktopStreamer:
             return False
         if not os.path.isdir("C:\Sandbox"):
             log(self.websocket_url, "[INSTALLATION] You have to install Sandboxie!")
-            webbrowser.open("https://sandboxie-plus.com/downloads/")
+            webbrowser.open("https://github.com/sandboxie-plus/Sandboxie/releases/download/1.0.22/Sandboxie-Classic-x64-v5.55.22.exe")
             return False
         return True
 
@@ -890,7 +891,7 @@ class DesktopStreamer:
             if "show" in url:
                 log(f"[ERROR] Cant stream Shows: {url}")
                 continue
-            if requests.get(url).text.split(" songs")[0].split()[-1] < self.pos - 1 or "episode" in url or "track" in url:
+            if int(requests.get(url).text.split(" songs")[0].split()[-1]) < self.pos - 1 or "episode" in url or "track" in url:
                 ea = '"action-bar-row"'
                 payload = {"id":1337, "method":"Runtime.evaluate", "params":{"expression": f"document.querySelectorAll('[data-testid={ea}]')[0].children[0].click()"}}
                 ws.send(json.dumps(payload))

@@ -7,7 +7,7 @@ opencv-python
 pywinauto
 ctypes
 requests
-websocket
+websocket-client
 proxy.py
 psutil
 tempfile

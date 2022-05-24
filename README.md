@@ -41,7 +41,7 @@ https://user-images.githubusercontent.com/50874994/169865287-4c7a14e5-00f3-4fd8-
 
 Note:
 
-This Software logs your usage. However, it just sends the amount of usage to my server, you can always delete thelines of code, and most importantly, it uses proxies so your ip is hidden. I cant tell who is when using this software, just how often everyone together uses it. Thanks if you support me by this little if you dont delete the lines. 
+This Software logs your usage. However, it just sends the amount of usage to my server, you can always delete thelines of code, and most importantly, it uses proxies so your ip is hidden. I cant tell who is when using this software, just how often everyone together uses it. Thanks if you support me by this little if you dont delete the lines.
 
 ## Contributing
 
@@ -75,7 +75,7 @@ Hello, skid. I know its in your nature to laboriously copy and paste this projec
 
 
 
-![Version](https://img.shields.io/badge/Mjolnir-v1.0-blue)
+![Version](https://img.shields.io/badge/Mjolnir-v1.0.1-blue)
 ![License](https://img.shields.io/badge/License-GNU%20GPL-green)
 ![Python](https://img.shields.io/badge/Python-v3.x-lightgrey)
 ![Platforms](https://img.shields.io/badge/Platform-win--32%20%7C%20win--64-lightgrey)
