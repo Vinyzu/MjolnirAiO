@@ -32,7 +32,7 @@ https://user-images.githubusercontent.com/50874994/169865287-4c7a14e5-00f3-4fd8-
 
 - Windows
 - Install [Spotify](https://www.spotify.com/download/windows/)
-- Install [Sandboxie](https://sandboxie-plus.com/downloads/)
+- Install [Sandboxie](https://github.com/sandboxie-plus/Sandboxie/releases/download/1.0.22/Sandboxie-Classic-x64-v5.55.22.exe)
 
 ## Using
 [Recommended Usage](https://github.com/Vinyzu/MjolnirAiO/blob/main/usages.md)
