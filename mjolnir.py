@@ -4,8 +4,8 @@ from webdriver_manager.chrome import ChromeDriverManager; from selenium.webdrive
 from discord_webhook import DiscordWebhook, DiscordEmbed
 from flask import Flask, request, render_template, redirect; from PIL import Image
 
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
+logging.getLogger('werkzeug').setLevel(logging.ERROR)
+logging.getLogger('WDM').setLevel(logging.NOTSET)
 warnings.simplefilter("ignore", UserWarning)
 
 app = Flask(__name__, template_folder="./frontend")
@@ -120,11 +120,9 @@ class DesktopGenerator:
                 better_lines = []
                 for line in open("C:\Windows\Sandboxie.ini", "r").read().splitlines(): better_lines.append(''.join(ch for ch in line if ch.isalnum()))
                 if any(boks in better_line for better_line in better_lines):
-                    print(1)
                     try: subprocess.call(f'{Start} /box:{boks} delete_sandbox', False); subprocess.call(f"{SbieIni} set {boks} Enabled n", False); subprocess.call(f"{SbieIni} set {boks} Enabled y", False)
                     except: log(self.websocket_url, "[ERROR] You have to run the .exe with Admin Permissions"); return False
                 else:
-                    print(2)
                     try: subprocess.call(f"{SbieIni} set {boks} Enabled y", False)
                     except: log(self.websocket_url, "[ERROR] You have to run the .exe with Admin Permissions"); return False
                 subprocess.call('"C:\Program Files\Sandboxie\Start.exe"  /reload', False)
@@ -564,7 +562,7 @@ class RequestGenerator:
 class Liker:
     def __init__(self, link, threads, timeout, proxies, proxy_type, path, url):
         self.link, self.threads, self.timeout, self.combo_path, self.websocket_url, self.count = link, int(threads) if threads else 10, int(timeout) if timeout else 5, path, url, 0
-        self.proxy_type, self.proxies, self.driver_exe = proxy_type, proxies.split("\r\n"), ChromeDriverManager(print_first_line=False, log_level=0).install()
+        self.proxy_type, self.proxies, self.driver_exe = proxy_type, proxies.split("\r\n"), ChromeDriverManager().install()
         os.environ['WDM_LOG'] = '0'
 
     def liker(self):
@@ -591,7 +589,10 @@ class Liker:
         except Exception as e: log(self.websocket_url, f"[ERROR] Couldnt spawn ProxyPool (Error: {str(e)})"); print(traceback.format_exc())
 
     def threaded_liker(self, combo):
-        user, password = combo.split(":")
+        try:
+            user, pw, rest =  combo.split(":", 2)
+        except:
+            user, pw = combo.split(":")
         options = Options()
         for item in ["--headless", "--no-sandbox", "--disable-dev-shm-usage", '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36', '--no-sandbox', '--log-level=3', '--lang=en', "--window-size=1920,1080", "--mute-audio"]:
             options.add_argument(item)
@@ -631,7 +632,7 @@ class Checker:
         self.proxy_type, self.proxies = proxy_type, proxies.split("\r\n")
         self.count, self.valid = 0, 0
         os.environ['WDM_LOG'] = '0'
-        self.driver_exe = ChromeDriverManager(print_first_line=False, log_level=0).install()
+        self.driver_exe = ChromeDriverManager().install()
 
     def checker(self):
         combos = open(self.combo_path, "r").read().splitlines()
@@ -700,9 +701,8 @@ class MailChecker:
             for i in threadz:
                 combo = combos[i]
                 if i == threadz[-1]:
-                    print(0)
                     self.threaded_checker(combo)
-                else: print(1); threading.Thread(target=self.threaded_checker, args=(combo,)).start()
+                else: threading.Thread(target=self.threaded_checker, args=(combo,)).start()
         log(self.websocket_url, f"[VALID] {self.valid} / [INVALID] {self.count - self.valid}")
         log(self.websocket_url, "[DONE] Done checking with all accounts")
 
@@ -928,7 +928,6 @@ class DesktopStreamer:
         # set image
         runtime = 1 if runtime == 0  else runtime
         Minutes = list(range(int(runtime)+1))
-        print(self.streams_mins, self.streaming_mins, self.like_mins)
         self.streams_mins[-1] = self.streamed
         self.streaming_mins[-1] = self.streaming
         self.like_mins[-1] = self.likes
@@ -977,12 +976,9 @@ class DesktopStreamer:
 
     def update_minutes(self):
         while self.current_streaming:
-            print("0", self.streams_mins, self.streaming_mins, self.like_mins)
             self.streams_mins.append(self.streamed)
             self.like_mins.append(self.likes)
-            print("1", self.streams_mins, self.streaming_mins, self.like_mins)
             time.sleep(60)
-            print("2", self.streams_mins, self.streaming_mins, self.like_mins)
 
     def update_seconds(self):
         while self.current_streaming:
@@ -990,7 +986,6 @@ class DesktopStreamer:
             time.sleep(20)
 
     def threaded_webhook(self):
-        print(1)
         threading.Thread(target=self.update_minutes).start()
         threading.Thread(target=self.update_seconds).start()
         runtimed = 1
@@ -1011,7 +1006,7 @@ class WebStreamer:
         link = link.replace('"', "").replace(" ", "")
         if os.path.exists(link): self.links = open(link).read().splitlines()
         else: self.links = link.split(",")
-        os.environ['WDM_LOG'], self.driver_exe = '0', ChromeDriverManager(print_first_line=False, log_level=0).install()
+        os.environ['WDM_LOG'], self.driver_exe = '0', ChromeDriverManager().install()
 
     def streamer(self):
         combos = open(self.combo_path, "r").read().splitlines()
@@ -1106,7 +1101,7 @@ def dgen():
     amount, threads, names, passwords, proxies, webhook, gender, order, minAge, maxAge, alternative, output_path = request.json.get("amount"), request.json.get("threads"), request.json.get("names"), request.json.get("passwords"), request.json.get("proxies"), request.json.get("webhook"), request.json.get("gender"), request.json.get("order"), request.json.get("minAge"), request.json.get("maxAge"), request.json.get("alternative"), request.json.get("path")
     path = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
     paths[path] = ["[INFO] Started Generator"]
-    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
+    paths[path].append("[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)")
     generator = DesktopGenerator(path, proxies, minAge, maxAge, gender, order, alternative)
     threading.Thread(target=generator.generator, args=(amount, names, passwords, threads, output_path, webhook)).start()
     return f"ws://mjolnir.tool/websockets?ws={path}"
@@ -1116,7 +1111,7 @@ def wgen():
     amount, threads, key, names, passwords, proxies, gender, minAge, maxAge, output_path = request.json.get("amount"), request.json.get("threads"), request.json.get("key"), request.json.get("names"), request.json.get("passwords"), request.json.get("proxies"), request.json.get("gender"), request.json.get("minAge"), request.json.get("maxAge"), request.json.get("path")
     path = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
     paths[path] = ["[INFO] Started Generator"]
-    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
+    paths[path].append("[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)")
     generator = WebGenerator(amount, threads, key, names, passwords, output_path, path, proxies, minAge, maxAge, gender)
     threading.Thread(target=generator.generator).start()
     return f"ws://mjolnir.tool/websockets?ws={path}"
@@ -1127,7 +1122,7 @@ def rgen():
     path = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
     if not output_path: paths[path] = ["[INFO] Invalid Output Path"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     paths[path] = ["[INFO] Started Generator"]
-    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
+    paths[path].append("[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)")
     generator = RequestGenerator(path, proxies)
     threading.Thread(target=generator.generator, args=(amount, threads, names, passwords, output_path)).start()
     return f"ws://mjolnir.tool/websockets?ws={path}"
@@ -1139,7 +1134,7 @@ def dstream():
     if not link or "https://" not in link or "spotify" not in link: paths[path] = ["[INFO] Invalid Spotify URL"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     if not combo_path: paths[path] = ["[INFO] Invalid Combo Path"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     paths[path] = ["[INFO] Started Streamer"]
-    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
+    paths[path].append("[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)")
     streamer = DesktopStreamer(combo_path, threads, proxies, link, max, like, follow, mute, pos, webhook, path)
     threading.Thread(target=streamer.streamer).start()
     return f"ws://mjolnir.tool/websockets?ws={path}"
@@ -1151,7 +1146,7 @@ def wstream():
     if not link or "https://" not in link or "spotify" not in link: paths[path] = ["[INFO] Invalid Spotify URL"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     if not combo_path: paths[path] = ["[INFO] Invalid Combo Path"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     paths[path] = ["[INFO] Started Streamer"]
-    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
+    paths[path].append("[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)")
     streamer = WebStreamer(combo_path, threads, proxies, link, max, like, pos, webhook, path)
     threading.Thread(target=streamer.streamer).start()
     return f"ws://mjolnir.tool/websockets?ws={path}"
@@ -1163,8 +1158,8 @@ def liker():
     if not link or "https://" not in link or "spotify" not in link: paths[path] = ["[INFO] Invalid Spotify URL"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     if not combo_path: paths[path] = ["[INFO] Invalid Combo Path"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     paths[path] = ["[INFO] Started Liker"]
-    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
-    if not timeout: paths[path] += "[INFO] Invalid Timeout, using 10"
+    paths[path].append("[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)")
+    if not timeout: paths[path].append("[INFO] Invalid Timeout, using 10")
     liker = Liker(link, threads, timeout, proxies, proxy_type, combo_path, path)
     threading.Thread(target=liker.liker).start()
     return f"ws://mjolnir.tool/websockets?ws={path}"
@@ -1175,8 +1170,8 @@ def checker():
     path = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
     if not combo_path: paths[path] = ["[INFO] Invalid Combo Path"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     paths[path] = ["[INFO] Started Checker"]
-    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
-    if not max: paths[path] += "[INFO] Invalid Maximum, using 5"
+    paths[path].append("[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)")
+    if not max: paths[path].append("[INFO] Invalid Maximum, using 5")
     checker = Checker(threads, proxies, proxy_type, max, combo_path, path)
     threading.Thread(target=checker.checker).start()
     return f"ws://mjolnir.tool/websockets?ws={path}"
@@ -1187,8 +1182,8 @@ def mchecker():
     path = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
     if not combo_path: paths[path] = ["[INFO] Invalid Combo Path"]; return f"ws://mjolnir.tool/websockets?ws={path}"
     paths[path] = ["[INFO] Started Checker"]
-    paths[path] += "[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)"
-    if not max: paths[path] += "[INFO] Invalid Maximum, using 5"
+    paths[path].append("[INFO] Coded by Vinyzu (https://github.com/Vinyzu/MjolnirAiO)")
+    if not max: paths[path].append("[INFO] Invalid Maximum, using 5")
     checker = MailChecker(threads, proxies, max, combo_path, path)
     threading.Thread(target=checker.checker).start()
     return f"ws://mjolnir.tool/websockets?ws={path}"
@@ -1204,6 +1199,9 @@ def run_general(ea):
 
 if __name__ == '__main__':
     #Check Version from Server and open Download Url if not newest
+    myversion = "1.0.2"
+    version = requests.get("https://raw.githubusercontent.com/Vinyzu/MjolnirAiO/main/README.md").text.split("Mjolnir-v")[1].split("-")[0]
+    if myversion != version: PySimpleGUI.Popup('There is a newer version of Mjolnir!', background_color='#111', button_color="#818181",  no_titlebar=True, font=('Monaco Monospace', 11)); webbrowser.open("https://github.com/Vinyzu/MjolnirAiO")
     multiprocessing.freeze_support()
     try: hostsman.Host().add("mjolnir.tool")
     except: PySimpleGUI.Popup('You have to run Mjolnir as Administrator!', background_color='#111', button_color="#818181",  no_titlebar=True, font=('Monaco Monospace', 11)); exit()

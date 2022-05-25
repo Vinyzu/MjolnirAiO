@@ -2,7 +2,7 @@ multiprocessing
 PySimpleGUI
 hostsman
 screeninfo
-twocaptcha
+2captcha-python
 opencv-python
 pywinauto
 ctypes

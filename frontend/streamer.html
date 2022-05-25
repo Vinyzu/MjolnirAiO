@@ -17,7 +17,7 @@
     </div>
     <div class="title">
       <h1>Streamer</h1>
-      <a href="https://github.com/Vinyzu/MjolnirAiO/" style="margin: auto; width: 95%; position: absolute; bottom: 22px; font-size: 20px;">If you paid for this, you got scammed!</a>
+      <a id="scam" href="https://github.com/Vinyzu/MjolnirAiO/" style="margin: auto; width: 95%; position: absolute; bottom: 22px; font-size: 20px;">If you paid for this, you got scammed!</a>
     </div>
     <div class="selection">
       <br><br>
@@ -149,6 +149,7 @@
               console.log('Message from server ', event.data);
               document.getElementById('textarea').value += event.data + "\r\n";
               // document.getElementById('textarea').value = event.data;
+              $("#scam").css('opacity','0');
               $("#textarea").css('opacity','100');
               $("#logs").css('opacity','100');
           });
@@ -203,6 +204,7 @@
                 console.log('Message from server ', event.data);
                 document.getElementById('r_textarea').value += event.data + "\r\n";
                 // document.getElementById('textarea').value = event.data;
+                $("#scam").css('opacity','0');
                 $("#r_textarea").css('opacity','100');
                 $("#r_logs").css('opacity','100');
             });
