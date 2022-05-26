@@ -2,6 +2,14 @@
 
 Every new change will be logged
 
+## v1.0.3
+```
++ Deleted unnecessary requirements (Packages are already inbuilt since python 3.x)
++ Added Git and Pip to Program Requirements (for mjolnir installation)
++ Changed Variable-name from "password" to "pw" in the Liker
++ Doc-stringed "proxy-select" interactions (broke web-stream-button)  
+```
+
 ## v1.0.2
 ```
 + Deleted unnecessary prints

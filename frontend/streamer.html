@@ -168,13 +168,14 @@
 
     var r_proxies = "";
     $("#r_logo").css('opacity','0');
-    document.getElementsByClassName("proxy-select")[0].style.display = 'none';
+    // document.getElementsByClassName("proxy-select")[0].style.display = 'none';
     document.getElementById("r_proxy-switch").onclick = function(e){if (! document.getElementById("r_proxy-switch").checked) {document.getElementById("r_proxy-switch").checked = false; proxies = "";} else {$("#r_logo").trigger('click');}};
     $('#r_logo').change( function(event) {
       var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
       xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){r_proxies = e.srcElement.result;}); myReader.readAsText(blob);}};
       xhr.send();
-      document.getElementsByClassName("proxy-select")[0].style.display = 'block';});
+      // document.getElementsByClassName("proxy-select")[0].style.display = 'block';
+      });
 
       document.getElementById("r_submit").onclick = function(e){
         $.ajax({

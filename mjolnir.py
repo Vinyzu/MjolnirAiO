@@ -604,7 +604,7 @@ class Liker:
             try: driver.find_element(By.ID, "login-username").send_keys(user); break
             except: log(self.websocket_url, f"[REDO] Site didnt load: {combo} ({_ + 1})"); time.sleep(5)
         else: log(self.websocket_url, f"[ERROR] Site didnt load: {combo}"); driver.close(); return
-        driver.find_element(By.ID, "login-password").send_keys(password)
+        driver.find_element(By.ID, "login-password").send_keys(pw)
         driver.find_element(By.ID, "login-button").click()
         if not "status" in driver.current_url:
             for _ in range(5):
@@ -1199,7 +1199,7 @@ def run_general(ea):
 
 if __name__ == '__main__':
     #Check Version from Server and open Download Url if not newest
-    myversion = "1.0.2"
+    myversion = "1.0.3"
     version = requests.get("https://raw.githubusercontent.com/Vinyzu/MjolnirAiO/main/README.md").text.split("Mjolnir-v")[1].split("-")[0]
     if myversion != version: PySimpleGUI.Popup('There is a newer version of Mjolnir!', background_color='#111', button_color="#818181",  no_titlebar=True, font=('Monaco Monospace', 11)); webbrowser.open("https://github.com/Vinyzu/MjolnirAiO")
     multiprocessing.freeze_support()

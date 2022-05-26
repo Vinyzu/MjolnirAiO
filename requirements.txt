@@ -1,16 +1,13 @@
-multiprocessing
 PySimpleGUI
 hostsman
 screeninfo
 2captcha-python
 opencv-python
 pywinauto
-ctypes
 requests
 websocket-client
 proxy.py
 psutil
-tempfile
 logging
 flask-sock
 matplotlib

@@ -34,6 +34,9 @@ https://user-images.githubusercontent.com/50874994/169865287-4c7a14e5-00f3-4fd8-
 - Install [Spotify](https://www.spotify.com/download/windows/)
 - Install [Sandboxie](https://github.com/sandboxie-plus/Sandboxie/releases/download/1.0.22/Sandboxie-Classic-x64-v5.55.22.exe)
 
+- [Git](https://git-scm.com/downloads) (To install Mjolnir)
+- [Pip](https://pip.pypa.io/en/stable/installation/) (To install Mjolnir)
+
 ## Using
 [Recommended Usage](https://github.com/Vinyzu/MjolnirAiO/blob/main/usages.md)
 
@@ -75,7 +78,7 @@ Hello, skid. I know its in your nature to laboriously copy and paste this projec
 
 
 
-![Version](https://img.shields.io/badge/Mjolnir-v1.0.2-blue)
+![Version](https://img.shields.io/badge/Mjolnir-v1.0.3-blue)
 ![License](https://img.shields.io/badge/License-GNU%20GPL-green)
 ![Python](https://img.shields.io/badge/Python-v3.x-lightgrey)
 ![Platforms](https://img.shields.io/badge/Platform-win--32%20%7C%20win--64-lightgrey)
