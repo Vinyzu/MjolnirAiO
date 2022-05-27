@@ -1,6 +1,6 @@
 import traceback, multiprocessing, PySimpleGUI, hostsman, screeninfo, twocaptcha, cv2, pywinauto, urllib, os, ctypes, subprocess, random, string, requests, json, time, threading, websocket, shutil, proxy, psutil, socket, tempfile, webbrowser, warnings, logging, flask_sock
 import matplotlib.pyplot as plt, matplotlib.gridspec as gridspec, selenium.webdriver as wd, numpy as np
-from webdriver_manager.chrome import ChromeDriverManager; from selenium.webdriver.chrome.options import Options; from selenium.webdriver.common.by import By; from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.webdriver.chrome.service import Service; from webdriver_manager.chrome import ChromeDriverManager; from selenium.webdriver.chrome.options import Options; from selenium.webdriver.common.by import By; from selenium.common.exceptions import ElementClickInterceptedException
 from discord_webhook import DiscordWebhook, DiscordEmbed
 from flask import Flask, request, render_template, redirect; from PIL import Image
 
@@ -598,7 +598,7 @@ class Liker:
             options.add_argument(item)
         if any(self.proxies): options.add_argument('--proxy-server="localhost:8899"')
         options.ignore_protected_mode_settings = True
-        driver = wd.Chrome(self.driver_exe, options=options)
+        driver = wd.Chrome(service=Service(self.driver_exe), options=options)
         driver.get("https://accounts.spotify.com/login")
         for _ in range(5):
             try: driver.find_element(By.ID, "login-username").send_keys(user); break
@@ -670,7 +670,7 @@ class Checker:
         for item in l:
             options.add_argument(item)
         options.ignore_protected_mode_settings = True
-        driver = wd.Chrome(self.driver_exe, options=options)
+        driver = wd.Chrome(service=Service(self.driver_exe), options=options)
         driver.get("https://accounts.spotify.com/en/login")
         driver.find_element(By.ID, "login-username").send_keys(user)
         driver.find_element(By.ID, "login-password").send_keys(pw)
@@ -848,6 +848,9 @@ class DesktopStreamer:
         # global streamed, stream_failed, stream_current_failed, likes, streaming
         wsUrl = requests.get(f"http://localhost:{port}/json").json()[0]["webSocketDebuggerUrl"]
         ws = websocket.create_connection(wsUrl)
+        try: self.inject_js(ws, "login-button", 0)
+        except: pass
+        time.sleep(2)
         self.inject_js(ws, "GlueTextInput-1", 0)
         for i in range(10):
             payload = {"id": 162, "method": "Input.dispatchKeyEvent", "params": {"type": "keyDown", "modifiers": 2, "code": "Back", "key":"Back", "windowsVirtualKeyCode": 8, "nativeVirtualKeyCode": 8, "autoRepeat": False, "isKeypad": False, "isSystemKey": False}}
@@ -1014,13 +1017,20 @@ class WebStreamer:
         try: requests.post(f"{server}/streamer/web", json={"amount": len(combos)}, proxies=urllib.request.getproxies())
         except: pass
         if any(self.proxies): threading.Thread(target=self.proxy_pool).start() #Spawning ProxyPool on Port 8899
-        while self.count < len(combos):
-            for i in range(int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads):
-                combo = combos[i]
-                if i == range(int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads)[-1]:
-                    self.threaded_streamer(combo)
-                else: threading.Thread(target=self.threaded_streamer, args=(combo)).start()
-        log(self.websocket_url, "[DONE] Done liking with all accounts")
+        for combo in combos:
+            threadz = int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads == 0
+            if not int(combos.index(combo) + 1) % threadz:
+                print(1)
+                self.threaded_streamer(combo)
+            else:
+                threading.Thread(target=self.threaded_streamer, args=(combo,)).start()
+        # while self.count < len(combos):
+        #     for i in range(int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads):
+        #         combo = combos[i]
+        #         if i == range(int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads)[-1]:
+        #             self.threaded_streamer(combo)
+        #         else: threading.Thread(target=self.threaded_streamer, args=(combo,)).start()
+        log(self.websocket_url, "[DONE] Done streaming with all accounts")
 
     def proxy_pool(self):
         log(self.websocket_url, "[PROXY] Spawning ProxyPool")
@@ -1042,8 +1052,7 @@ class WebStreamer:
         for item in l:
             options.add_argument(item)
         options.ignore_protected_mode_settings = True
-
-        driver = wd.Chrome(self.driver_exe, options=options)
+        driver = wd.Chrome(service=Service(self.driver_exe), options=options)
         driver.get("https://accounts.spotify.com/login")
         time.sleep(3)
         driver.find_element(By.ID, "login-username").send_keys(user)
@@ -1199,7 +1208,7 @@ def run_general(ea):
 
 if __name__ == '__main__':
     #Check Version from Server and open Download Url if not newest
-    myversion = "1.0.3"
+    myversion = "1.0.4"
     version = requests.get("https://raw.githubusercontent.com/Vinyzu/MjolnirAiO/main/README.md").text.split("Mjolnir-v")[1].split("-")[0]
     if myversion != version: PySimpleGUI.Popup('There is a newer version of Mjolnir!', background_color='#111', button_color="#818181",  no_titlebar=True, font=('Monaco Monospace', 11)); webbrowser.open("https://github.com/Vinyzu/MjolnirAiO")
     multiprocessing.freeze_support()

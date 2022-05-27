@@ -78,7 +78,7 @@ Hello, skid. I know its in your nature to laboriously copy and paste this projec
 
 
 
-![Version](https://img.shields.io/badge/Mjolnir-v1.0.3-blue)
+![Version](https://img.shields.io/badge/Mjolnir-v1.0.4-blue)
 ![License](https://img.shields.io/badge/License-GNU%20GPL-green)
 ![Python](https://img.shields.io/badge/Python-v3.x-lightgrey)
 ![Platforms](https://img.shields.io/badge/Platform-win--32%20%7C%20win--64-lightgrey)

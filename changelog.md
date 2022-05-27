@@ -2,6 +2,13 @@
 
 Every new change will be logged
 
+## v1.0.4
+```
++ Recoded the WebStreamer Calling Algorithm (Called one combo over and over again before)
++ Changed Usage of executable_path to service object when calling selenium
++ Added Login Button Click in the DesktopStreamer (Failed to Login before if u werent logged in yet)
+```
+
 ## v1.0.3
 ```
 + Deleted unnecessary requirements (Packages are already inbuilt since python 3.x)
