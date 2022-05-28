@@ -8,7 +8,6 @@ requests
 websocket-client
 proxy.py
 psutil
-logging
 flask-sock
 matplotlib
 selenium
