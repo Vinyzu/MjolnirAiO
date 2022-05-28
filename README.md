@@ -22,7 +22,7 @@ https://user-images.githubusercontent.com/50874994/169865287-4c7a14e5-00f3-4fd8-
 ### Installing Mjolnir with Python
 
 ```bash
-  git clone git:github.com/Vinyzu/MjolnirAiO MjolnirAiO
+  git clone https://github.com/Vinyzu/MjolnirAiO MjolnirAiO
   cd MjolnirAiO
   pip install -r requirements.txt
   python mjolnir.py
@@ -44,7 +44,7 @@ https://user-images.githubusercontent.com/50874994/169865287-4c7a14e5-00f3-4fd8-
 
 Note:
 
-This Software logs your usage. However, it just sends the amount of usage to my server, you can always delete thelines of code, and most importantly, it uses proxies so your ip is hidden. I cant tell who is when using this software, just how often everyone together uses it. Thanks if you support me by this little if you dont delete the lines.
+This Software logs your usage. However, it just sends the amount of usage to my server, you can always delete the lines of code, and most importantly, it uses proxies so your IP-address is hidden. I cant tell who is when using this software, just how often everyone together uses it. Thanks if you support me by this little if you don´t delete the lines.
 
 ## Contributing
 
@@ -55,14 +55,14 @@ See [Contributing](https://github.com/Vinyzu/MjolnirAiO/blob/main/contributing.m
 
 ## To the Skids
 
-Hello, skid. I know its in your nature to laboriously copy and paste this project and sell it as yours. And i can´t 100% prevent that. However, legally you arent allowed to share your skidded Mjolnir other than the source code. And i know that you give a fuck about Licenses and Copyright, but if you gonna use this code as yours and don´t mark me as the original author, i can asure you that you won´t have a good time selling this ;d.
+Hello, skid. I know its in your nature to laboriously copy and paste this project and sell it as yours. And i can´t 100% prevent that. However, legally you aren´t allowed to share your skidded Mjolnir other than the source code. And i know that you give a fuck about Licenses and Copyright, but if you gonna use this code as yours and don´t mark me as the original author, i can assure you that you won´t have a good time selling this ;d.
 
 ## Copyright and License
 © [Vinyzu](https://github.com/Vinyzu/)
 
 [GNU GPL](https://choosealicense.com/licenses/gpl-3.0/)
 
-(Commercial Usage is allowed, but souce, license and copyright has to made available. Mjolnir does not provide and Liability or Warranty)
+(Commercial Usage is allowed, but source, license and copyright has to made available. Mjolnir does not provide and Liability or Warranty)
 
 ## Authors
 
@@ -78,7 +78,7 @@ Hello, skid. I know its in your nature to laboriously copy and paste this projec
 
 
 
-![Version](https://img.shields.io/badge/Mjolnir-v1.0.4-blue)
+![Version](https://img.shields.io/badge/Mjolnir-v1.0.5-blue)
 ![License](https://img.shields.io/badge/License-GNU%20GPL-green)
 ![Python](https://img.shields.io/badge/Python-v3.x-lightgrey)
 ![Platforms](https://img.shields.io/badge/Platform-win--32%20%7C%20win--64-lightgrey)

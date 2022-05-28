@@ -2,6 +2,15 @@
 
 Every new change will be logged
 
+## v1.0.5
+```
++ Edited Sandbox Deletion (No AdminPerms required anymore and beforehand it didnt delete them sometimes)
++ Fixxed DesktopStreamer Mute Feature
++ Fixxed DesktopStreamer Preferences-Setting
++ Fixxed WebStreamer Threads
++ Some (a bit unnecessary) Sandbox renaming to avoid Sandbox-issues
+```
+
 ## v1.0.4
 ```
 + Recoded the WebStreamer Calling Algorithm (Called one combo over and over again before)

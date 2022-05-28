@@ -724,8 +724,9 @@ class MailChecker:
 
 class DesktopStreamer:
     def __init__(self, combo_path, threads, proxies, link, max, like, follow, mute, pos, webhook, path):
+        pos = 0 if not pos else pos
         self.threads, self.start_time = int(threads) if threads else 10, time.time()
-        self.combo_path, self.max, self.like, self.follow, self.mute, self.pos = combo_path.replace('"', ""), int(max) if max else 5, int(like) if like else 0, int(follow) if follow else 0, mute if mute else True, int(int(pos) if pos else 0) + 1
+        self.combo_path, self.max, self.like, self.follow, self.mute, self.pos = combo_path.replace('"', ""), int(max) if max else 5, int(like) if like else 0, int(follow) if follow else 0, mute if mute else True, int(int(pos) if int(pos) else 1) + 1
         self.proxies, self.webhook_url, self.websocket_url = proxies.split("\r\n"), webhook, path
         self.spotify_path = str(str(os.getenv('APPDATA')) + "\\Spotify\\")
         link = link.replace('"', "").replace(" ", "")
@@ -753,7 +754,8 @@ class DesktopStreamer:
         log(self.websocket_url, "[SETUP] Setting Spotifys Preferences!")
         with open(f"{self.spotify_path}prefs", "r") as f:
             words = ['language="en"' if "language" in word else word for word in f.read().splitlines()]
-            words = ["" if word in ("autologin", "network") else word for word in words]
+            words = ["" if "autologin" in word else word for word in words]
+            words = ["" if "network" in word else word for word in words]
             open(f"{self.spotify_path}prefs", "w").close()
             with open(f"{self.spotify_path}prefs", 'w') as f:
                 for item in words: f.write("%s\n" % item)
@@ -770,8 +772,10 @@ class DesktopStreamer:
         try:
             subfolders = [f.path for f in os.scandir("C:\Sandbox") if f.is_dir()]
             for folder in [f.path for f in os.scandir(subfolders[0]) if f.is_dir()]:
-                if "Mjolnir" in str(folder): os.remove(folder)
-        except: log(self.websocket_url, "[WARNING] Couldnt delete Sandboxes! (You have to run the .exe with Admin Permissions)")
+                if "Mjolnir" in str(folder):
+                    os.chmod(folder, 0o777)
+                    shutil.rmtree(folder) #os.remove(folder)
+        except Exception as e: log(self.websocket_url, "[WARNING] Couldnt delete Sandboxes! (You have to run the .exe with Admin Permissions)")
 
     def kill_spotify(self):
         try: subprocess.check_call(["TASKKILL", "/F", "/IM", "spotify.exe"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
@@ -799,7 +803,7 @@ class DesktopStreamer:
                     r_port = random.randint(19000, 19900)
                     if r_port not in ports: ports.append(r_port); break
                 # Starting Spotify in Sandbox
-                boks, SbieIni, Start  = f"Mjolnir{i}", "C:\Program Files\Sandboxie\SbieIni.exe", "C:\Program Files\Sandboxie\Start.exe"
+                boks, SbieIni, Start  = f"Mjolnir{random.randint(0,9999999999)}", "C:\Program Files\Sandboxie\SbieIni.exe", "C:\Program Files\Sandboxie\Start.exe"
                 better_lines = []
                 for line in open("C:\Windows\Sandboxie.ini", "r").read().splitlines(): better_lines.append(''.join(ch for ch in line if ch.isalnum()))
                 if any(boks in better_line for better_line in better_lines):
@@ -871,8 +875,8 @@ class DesktopStreamer:
             time.sleep(2)
             payload = {"id":1337, "method":"Runtime.evaluate", "params":{"expression": 'document.querySelectorAll("[aria-describedby=volume-icon]")[0].click()'}}
             ws.send(json.dumps(payload))
-            payload = {"id":1337, "method":"Runtime.evaluate", "params":{"expression": 'document.querySelectorAll("[data-testid=volume-bar]")[0].children[0].click()'}}
-            ws.send(json.dumps(payload))
+            # payload = {"id":1337, "method":"Runtime.evaluate", "params":{"expression": 'document.querySelectorAll("[data-testid=volume-bar]")[0].children[0].click()'}}
+            # ws.send(json.dumps(payload))
             time.sleep(2)
         for url in random.sample(self.links, k=len(self.links)):
             ea = '"/search"'
@@ -1018,7 +1022,7 @@ class WebStreamer:
         except: pass
         if any(self.proxies): threading.Thread(target=self.proxy_pool).start() #Spawning ProxyPool on Port 8899
         for combo in combos:
-            threadz = int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads == 0
+            threadz = int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads
             if not int(combos.index(combo) + 1) % threadz:
                 print(1)
                 self.threaded_streamer(combo)
@@ -1208,7 +1212,7 @@ def run_general(ea):
 
 if __name__ == '__main__':
     #Check Version from Server and open Download Url if not newest
-    myversion = "1.0.4"
+    myversion = "1.0.5"
     version = requests.get("https://raw.githubusercontent.com/Vinyzu/MjolnirAiO/main/README.md").text.split("Mjolnir-v")[1].split("-")[0]
     if myversion != version: PySimpleGUI.Popup('There is a newer version of Mjolnir!', background_color='#111', button_color="#818181",  no_titlebar=True, font=('Monaco Monospace', 11)); webbrowser.open("https://github.com/Vinyzu/MjolnirAiO")
     multiprocessing.freeze_support()
