@@ -784,6 +784,7 @@ class DesktopStreamer:
     def streamer(self):
         #Local Values
         combo, count, self.current_streaming = open(self.combo_path, "r").read().splitlines(), 0, True
+        combo_len = len(combo)
         #Logging to server
         try: requests.post(f"{server}/streamer/desktop", json={"amount": len(combo)}, proxies=urllib.request.getproxies())
         except: pass
@@ -791,13 +792,15 @@ class DesktopStreamer:
         if any(self.proxies): threading.Thread(target=self.proxy_pool).start() #Spawning ProxyPool on Port 8899
         else: log(self.websocket_url, "[PROXY] No proxy server will be used")
         if self.webhook_url: threading.Thread(target=self.threaded_webhook).start()
-        while count < len(combo):
+
+
+        while count < combo_len:
             self.current_failed, self.waiting = 0, 0
             log(self.websocket_url, "[SPOTIFY] Killing all instances")
             self.kill_spotify()
             time.sleep(2)
             ports = []
-            self.threadz = range(int(len(combo) - count) if int(len(combo) - count) <= self.threads else self.threads)
+            self.threadz = range(int(combo_len - count) if int(combo_len - count) <= self.threads else self.threads)
             for i in self.threadz:
                 while True:
                     r_port = random.randint(19000, 19900)
@@ -821,6 +824,7 @@ class DesktopStreamer:
                 if i == range(len(ports))[-1]:
                     self.threaded_streamer(combo[i], ports[i], self.like, self.max)
                 else: threading.Thread(target=self.thread, args=([combo[i], ports[i], self.like, self.max],)).start()
+                current_combo.append(combo[i])
                 count += 1
             for comb in current_combo: combo.remove(comb)
         self.kill_spotify()
@@ -849,7 +853,6 @@ class DesktopStreamer:
             ws.send(json.dumps(payload))
 
     def threaded_streamer(self, combo, port, like, wait):
-        # global streamed, stream_failed, stream_current_failed, likes, streaming
         wsUrl = requests.get(f"http://localhost:{port}/json").json()[0]["webSocketDebuggerUrl"]
         ws = websocket.create_connection(wsUrl)
         try: self.inject_js(ws, "login-button", 0)
@@ -908,7 +911,7 @@ class DesktopStreamer:
                 ws.send(json.dumps(payload))
             log(self.websocket_url, f"[SUCCESS] Account successfully streaming: {combo}")
             self.streaming += 1
-            if random.choices([1,0], [self.like/100, int(100-self.like)/100]):
+            if any(random.choices([1,0], [self.like/100, int(100-self.like)/100])):
                 time.sleep(2)
                 ea = '"action-bar-row"'
                 payload = {"id":1337, "method":"Runtime.evaluate", "params":{"expression": f"document.querySelectorAll('[data-testid={ea}]')[0].children[1].click()"}}
@@ -926,7 +929,9 @@ class DesktopStreamer:
         self.streamed += 1
         self.streaming -= 1
         payload = {"id":1,"method":"Browser.crash"}
-        ws.send(json.dumps(payload))
+        try: ws.send(json.dumps(payload))
+        except: pass
+        return
 
     def webhook(self, runtime, title):
         webhook = DiscordWebhook(username='Mjolnir AiO Tool', url=self.webhook_url, avatar_url="https://www.freepnglogos.com/uploads/spotify-logo-png/spotify-icon-marilyn-scott-0.png")
@@ -1024,7 +1029,6 @@ class WebStreamer:
         for combo in combos:
             threadz = int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads
             if not int(combos.index(combo) + 1) % threadz:
-                print(1)
                 self.threaded_streamer(combo)
             else:
                 threading.Thread(target=self.threaded_streamer, args=(combo,)).start()
@@ -1093,7 +1097,7 @@ class WebStreamer:
                 driver.quit()
                 return
 
-            if random.choices([1,0], [self.like/100, int(100-self.like)/100]):
+            if any(random.choices([1,0], [self.like/100, int(100-self.like)/100])):
                 play_buttons = driver.find_elements(By.XPATH, "//button[@data-testid='add-button']")
                 for _, button in enumerate(play_buttons):
                     if _ == 0:
@@ -1212,7 +1216,7 @@ def run_general(ea):
 
 if __name__ == '__main__':
     #Check Version from Server and open Download Url if not newest
-    myversion = "1.0.5"
+    myversion = "1.0.6"
     version = requests.get("https://raw.githubusercontent.com/Vinyzu/MjolnirAiO/main/README.md").text.split("Mjolnir-v")[1].split("-")[0]
     if myversion != version: PySimpleGUI.Popup('There is a newer version of Mjolnir!', background_color='#111', button_color="#818181",  no_titlebar=True, font=('Monaco Monospace', 11)); webbrowser.open("https://github.com/Vinyzu/MjolnirAiO")
     multiprocessing.freeze_support()

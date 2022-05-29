@@ -2,6 +2,14 @@
 
 Every new change will be logged
 
+## v1.0.6
+```
++ Fixxed Like Probability (Liked every time before)
++ Added Exception-Catcher on Browser-Crasher (threw an error sometimes before that you can just ignore)
++ Recoded DesktopStreamer´s combo Algorithm (used the same account over and over again before)
+-> Note: Maight have to recode same Algorithm on other features!
+```
+
 ## v1.0.5
 ```
 + Edited Sandbox Deletion (No AdminPerms required anymore and beforehand it didnt delete them sometimes)
