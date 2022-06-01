@@ -154,10 +154,8 @@
     var webhook = "";
     document.getElementById("webhook-switch").onclick = function(e){
       if (! document.getElementById("webhook-switch").checked) {
-        console.log("bad");
         document.getElementById("webhook-switch").checked = false; webhook = "";
       } else {
-        console.log("good");
         var url = prompt("Please enter your webhook:", "");
         if (! url.includes("https")) {
           alert("The Webhook-Url was invalid!");
@@ -214,7 +212,7 @@
 
     var w_names = "";
     $("#w_logo").css('opacity','0');
-    document.getElementById("name-switch").onclick = function(e){if (! document.getElementById("w_name-switch").checked) {document.getElementById("w_name-switch").checked = false; w_names = "";} else {$("#w_logo").trigger('click');}};
+    document.getElementById("w_name-switch").onclick = function(e){if (! document.getElementById("w_name-switch").checked) {document.getElementById("w_name-switch").checked = false; w_names = "";} else {$("#w_logo").trigger('click');}};
     $('#w_logo').change( function(event) {
       var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
       xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){w_names = e.srcElement.result;}); myReader.readAsText(blob);}};
@@ -223,7 +221,7 @@
 
     var w_passwords = "";
     $("#w_logo1").css('opacity','0');
-    document.getElementById("password-switch").onclick = function(e){if (! document.getElementById("w_password-switch").checked) {document.getElementById("w_password-switch").checked = false; w_passwords = "";} else {$("#w_logo1").trigger('click');}};
+    document.getElementById("w_password-switch").onclick = function(e){if (! document.getElementById("w_password-switch").checked) {document.getElementById("w_password-switch").checked = false; w_passwords = "";} else {$("#w_logo1").trigger('click');}};
     $('#w_logo1').change( function(event) {
       var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
       xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){w_passwords = e.srcElement.result;}); myReader.readAsText(blob);}};
@@ -232,7 +230,7 @@
 
     var w_proxies = "";
     $("#w_logo2").css('opacity','0');
-    document.getElementById("proxy-switch").onclick = function(e){if (! document.getElementById("w_proxy-switch").checked) {document.getElementById("w_proxy-switch").checked = false; w_proxies = "";} else {$("#w_logo2").trigger('click');}};
+    document.getElementById("w_proxy-switch").onclick = function(e){if (! document.getElementById("w_proxy-switch").checked) {document.getElementById("w_proxy-switch").checked = false; w_proxies = "";} else {$("#w_logo2").trigger('click');}};
     $('#w_logo2').change( function(event) {
       var tmppath = URL.createObjectURL(event.target.files[0]); var xhr = new XMLHttpRequest(); xhr.open('GET', tmppath, true); xhr.responseType = 'blob';
       xhr.onload = function(e) {if (this.status == 200) {var blob = this.response; var myReader = new FileReader(); myReader.addEventListener("loadend", function(e){w_proxies = e.srcElement.result;}); myReader.readAsText(blob);}};

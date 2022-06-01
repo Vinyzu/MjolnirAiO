@@ -32,22 +32,32 @@ def websockets(ws):
 def log(path, msg):
     paths[path].append(msg)
 
-def log1(path, msg):
-    print(msg)
+class General:
+    def close_spotify(ws):
+        payload = {"id":1,"method":"Browser.close"}
+        try: ws.send(json.dumps(payload))
+        except: pass
+        payload = {"id":1,"method":"Browser.crash"}
+        try: ws.send(json.dumps(payload))
+        except: pass
 
-class DesktopGenerator:
-    def __init__(self, websocket_url, proxies, minAge, maxAge, gender, order, alternative):
-        #Global ClassValues
-        self.start_time, self.generating = time.time(), True
-        self.websocket_url, self.proxies, self.minAge, self.maxAge, self.gender, self.order = websocket_url, proxies.split("\r\n"), minAge if minAge else "1970", maxAge if maxAge else "1980", gender if gender else "male", order if order else "day"
-        self.generated, self.failed, self.current_failed, self.accounts_mins = 0, 0, 0, []
-        self.spotify_path = str(str(os.getenv('APPDATA')) + "\\Spotify\\")
-        with tempfile.NamedTemporaryFile(suffix='.txt', prefix=os.path.basename(__file__)) as tf:
-            temp_txt = tf.name
-        self.temp_txt, self.alternative, self.waiting = temp_txt, alternative, 0
-        #Checking and Modifying Installations
-        if not self.check_installations(): return
-        self.set_spotify()
+    def proxy_pool(self):
+        log(self.websocket_url, "[PROXY] Spawning ProxyPool")
+        proxy_pool = []
+        for proxie in self.proxies: proxy_pool.extend(["--proxy-pool", proxie])
+        try:
+            with proxy.Proxy(["--log-level", "e", "--plugins" , "proxy.plugin.ProxyPoolPlugin", *proxy_pool]) as p:
+                proxy.sleep_loop()
+        except Exception as e: log(self.websocket_url, f"[ERROR] Couldnt spawn ProxyPool (Error: {str(e)})")
+
+    def combo_split(combo):
+        try:
+            username, password, rest =  combo.split(":", 2)
+        except:
+            try:
+                username, password = combo.split(":")
+            except: return False, False
+        return username, password
 
     def check_installations(self):
         if not os.path.isdir(self.spotify_path):
@@ -66,7 +76,7 @@ class DesktopGenerator:
         with open(f"{self.spotify_path}prefs", "r") as f:
             words = ['language="en"' if "language" in word else word for word in f.read().splitlines()]
             words = ["" if "autologin" in word else word for word in words]
-            words = ["" if "network" in word else word for word in words]#
+            words = ["" if "network" in word else word for word in words]
             open(f"{self.spotify_path}prefs", "w").close()
             with open(f"{self.spotify_path}prefs", 'w') as f:
                 for item in words: f.write("%s\n" % item)
@@ -78,17 +88,33 @@ class DesktopGenerator:
             newpath = str(roaming_path + "\\Users")
             if not os.path.exists(newpath): os.makedirs(newpath)
         except: log(self.websocket_url, "[WARNING] Couldnt delete Spotify Users!")
-        # #Deleting all sandboxes
-        # log(self.websocket_url, "[SETUP] Deleting Mjolnir-Sandboxes!")
-        # try:
-        #     subfolders = [f.path for f in os.scandir("C:\Sandbox") if f.is_dir()]
-        #     for folder in [f.path for f in os.scandir(subfolders[0]) if f.is_dir()]:
-        #         if "Mjolnir" in str(folder): os.remove(folder)
-        # except Exception as e: print(e); log(self.websocket_url, "[WARNING] Couldnt delete Sandboxes! (You have to run the .exe with Admin Permissions)")
+        #Deleting all sandboxes
+        log(self.websocket_url, "[SETUP] Deleting Mjolnir-Sandboxes!")
+        try:
+            subfolders = [f.path for f in os.scandir("C:\Sandbox") if f.is_dir()]
+            for folder in [f.path for f in os.scandir(subfolders[0]) if f.is_dir()]:
+                if "Mjolnir" in str(folder):
+                    os.chmod(folder, 0o777)
+                    shutil.rmtree(folder) #os.remove(folder)
+        except Exception as e: log(self.websocket_url, "[WARNING] Couldnt delete Sandboxes! (You have to run the .py with Admin Permissions)")
 
     def kill_spotify(self):
         try: subprocess.check_call(["TASKKILL", "/F", "/IM", "spotify.exe"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
         except: pass
+
+class DesktopGenerator:
+    def __init__(self, websocket_url, proxies, minAge, maxAge, gender, order, alternative):
+        #Global ClassValues
+        self.start_time, self.generating = time.time(), True
+        self.websocket_url, self.proxies, self.minAge, self.maxAge, self.gender, self.order = websocket_url, proxies.split("\r\n"), minAge if minAge else "1970", maxAge if maxAge else "1980", gender if gender else "male", order if order else "day"
+        self.generated, self.failed, self.current_failed, self.accounts_mins = 0, 0, 0, []
+        self.spotify_path = str(str(os.getenv('APPDATA')) + "\\Spotify\\")
+        with tempfile.NamedTemporaryFile(suffix='.txt', prefix=os.path.basename(__file__)) as tf:
+            temp_txt = tf.name
+        self.temp_txt, self.alternative, self.waiting = temp_txt, alternative, 0
+        #Checking and Modifying Installations
+        if not General.check_installations(self): return
+        General.set_spotify(self)
 
     def generator(self, amount, names, passwords, threads, output_path, webhook_url):
         #Logging to server
@@ -101,13 +127,13 @@ class DesktopGenerator:
         output_path = "output.txt" if not output_path else output_path
         #Local Values
         threads, amount, count = int(threads), int(amount), 0
-        if any(self.proxies): threading.Thread(target=self.proxy_pool).start() #Spawning ProxyPool on Port 8899
+        if any(self.proxies): threading.Thread(target=General.proxy_pool, args=(self,)).start() #Spawning ProxyPool on Port 8899
         else: log(self.websocket_url, "[PROXY] No proxy server will be used")
         if webhook_url: threading.Thread(target=self.threaded_webhook, args=(webhook_url, threads, self.temp_txt,)).start()
         while count < amount:
             self.current_failed, self.waiting = 0, 0
             log(self.websocket_url, "[SPOTIFY] Killing all instances")
-            self.kill_spotify()
+            # General.kill_spotify(self)
             time.sleep(2)
             ports = []
             self.threadz = range(int(amount - count) if int(amount - count) <= threads else threads)
@@ -121,10 +147,10 @@ class DesktopGenerator:
                 for line in open("C:\Windows\Sandboxie.ini", "r").read().splitlines(): better_lines.append(''.join(ch for ch in line if ch.isalnum()))
                 if any(boks in better_line for better_line in better_lines):
                     try: subprocess.call(f'{Start} /box:{boks} delete_sandbox', False); subprocess.call(f"{SbieIni} set {boks} Enabled n", False); subprocess.call(f"{SbieIni} set {boks} Enabled y", False)
-                    except: log(self.websocket_url, "[ERROR] You have to run the .exe with Admin Permissions"); return False
+                    except: log(self.websocket_url, "[ERROR] You have to run the .py with Admin Permissions"); return False
                 else:
                     try: subprocess.call(f"{SbieIni} set {boks} Enabled y", False)
-                    except: log(self.websocket_url, "[ERROR] You have to run the .exe with Admin Permissions"); return False
+                    except: log(self.websocket_url, "[ERROR] You have to run the .py with Admin Permissions"); return False
                 subprocess.call('"C:\Program Files\Sandboxie\Start.exe"  /reload', False)
                 if any(self.proxies): subprocess.call(f'"C:\Program Files\Sandboxie\Start.exe" /box:{boks} "{self.spotify_path}Spotify.exe" --mute-audio --remote-debugging-port={r_port} --proxy-server="localhost:8899"', False)
                 else: subprocess.call(f'"C:\Program Files\Sandboxie\Start.exe" /box:{boks} "{self.spotify_path}Spotify.exe" --mute-audio --remote-debugging-port={r_port}', False)
@@ -134,7 +160,7 @@ class DesktopGenerator:
                 else: threading.Thread(target=self.thread, args=([random.choice(names), str(random.choice(passwords) + random.choice(passwords) + "&/$!"), ports[i], output_path],)).start()
                 count += 1
             amount += self.current_failed
-        self.kill_spotify()
+        # General.kill_spotify(self)
         self.generating = False
         log(self.websocket_url, "[DONE] Done generating all accounts")
         if webhook_url: self.webhook(webhook_url, threads, int(int(time.time() - self.start_time)/60), self.temp_txt, 'Mjolnir is done Generating!')
@@ -227,15 +253,8 @@ class DesktopGenerator:
             log(self.websocket_url, "[ERROR] Bad Proxy (Use ISP/Residential)")
             self.failed += 1
             self.current_failed += 1
+            General.close_spotify(ws)
             return
-        # Clicking Profile Button
-        ## TODO: $ doesnt work use document.querySelectorAll
-        # payload = {"id": 1337, "method": "Runtime.evaluate", "params": {"expression": '$("button[data-testid=user-widget-link]").click()'}}
-        # ws.send(json.dumps(payload))
-        # time.sleep(1)
-        # # Clicking Logout Button
-        # payload = {"id": 1337, "method": "Runtime.evaluate", "params": {"expression": '$("button[data-testid=user-widget-dropdown-logout]").click()'}}
-        # ws.send(json.dumps(payload))
         log(self.websocket_url, f"[SUCCESS] Successfully created: {email}:{password}")
         with open(output_path,'a') as output_file:
             write_string = ''
@@ -246,6 +265,7 @@ class DesktopGenerator:
             for i in [email, password, name,]: write_string += str(i + ':')
             output_file.write(str(write_string[:-1] + '\n'))
         self.generated += 1
+        General.close_spotify(ws)
 
     def inject_js(self, ws, text, i):
         if i == 0:
@@ -257,15 +277,6 @@ class DesktopGenerator:
         else:
             payload = {"id": 1337, "method": "Runtime.evaluate", "params": {"expression": f"document.getElementById('{text}').focus()"}}
             ws.send(json.dumps(payload))
-
-    def proxy_pool(self):
-        log(self.websocket_url, "[PROXY] Spawning ProxyPool")
-        proxy_pool = []
-        for proxie in self.proxies: proxy_pool.extend(["--proxy-pool", proxie])
-        try:
-            with proxy.Proxy(["--log-level", "e", "--plugins" , "proxy.plugin.ProxyPoolPlugin", *proxy_pool]) as p:
-                proxy.sleep_loop()
-        except Exception as e: pass#log(self.websocket_url, f"[ERROR] Couldnt spawn ProxyPool (Error: {str(e)})"); import traceback; print(traceback.format_exc())
 
     def webhook(self, url, threads, runtime, accounts_path, title):
         webhook = DiscordWebhook(username='Mjolnir AiO Tool', url=url, avatar_url="https://www.freepnglogos.com/uploads/spotify-logo-png/spotify-icon-marilyn-scott-0.png")
@@ -334,7 +345,7 @@ class WebGenerator:
         self.names = requests.get("https://raw.githubusercontent.com/jeanphorn/wordlist/master/usernames.txt").text.splitlines() if not names else names.split("\r\n")
         self.passwords = requests.get("https://raw.githubusercontent.com/berzerk0/Probable-Wordlists/master/Real-Passwords/WPA-Length/Top4800-WPA-probable-v2.txt").text.splitlines() if not passwords else passwords.split("\r\n")
         #Checking and Modifying Installations
-        if any(self.proxies): threading.Thread(target=self.proxy_pool).start() #Spawning ProxyPool on Port 8899
+        if any(self.proxies): threading.Thread(target=General.proxy_pool, args=(self,)).start() #Spawning ProxyPool on Port 8899
         else: log(self.websocket_url, "[PROXY] No proxy server will be used")
 
     def generator(self):
@@ -344,9 +355,6 @@ class WebGenerator:
         #Local Values
         while self.count < self.amount:
             self.current_failed, self.waiting = 0, 0
-            # log(self.websocket_url, "[SPOTIFY] Killing all instances")
-            # # self.kill_spotify
-            # time.sleep(2)
             self.threadz = range(int(self.amount - self.count) if int(self.amount - self.count) <= self.threads else self.threads)
             try:
                 solver = twocaptcha.TwoCaptcha(self.captcha_key)
@@ -360,7 +368,6 @@ class WebGenerator:
                 self.count += 1
             self.delete_captcha_images()
             self.amount += self.current_failed
-        # self.kill_spotify()
         log(self.websocket_url, "[DONE] Done generating all accounts")
         try:
             for path in self.pngs: os.remove(f'{path}.png'); os.remove(f'{path}.jpg')
@@ -372,21 +379,10 @@ class WebGenerator:
             if "temp" in file and (".png" in file or ".jpg" in file):
                 os.remove(file)
 
-    def proxy_pool(self):
-        log(self.websocket_url, "[PROXY] Spawning ProxyPool")
-        proxy_pool = []
-        for proxie in self.proxies: proxy_pool.extend(["--proxy-pool", proxie])
-        try:
-            with proxy.Proxy(["--log-level", "e", "--plugins" , "proxy.plugin.ProxyPoolPlugin", *proxy_pool]) as p:
-                proxy.sleep_loop()
-        #log(self.websocket_url, f"[ERROR] Couldnt spawn ProxyPool (Error: {str(e)})"); import traceback; print(traceback.format_exc())
-        except Exception as e: pass
-
     def captcha(self, path):
         solver = twocaptcha.TwoCaptcha(self.captcha_key, defaultTimeout=60, pollingInterval=5)
         result = solver.coordinates(f'{path}.jpg')
         return result
-        # return {'captchaId': '70226257460', 'code': 'coordinates:x=34,y=158;x=204,y=198;x=89,y=452;x=331,y=541'}
 
     def screenalize(self, page):
         while True:
@@ -513,7 +509,7 @@ class RequestGenerator:
         while self.count < amount:
             for i in range(int(amount - self.count) if int(amount - self.count) <= threads else threads):
                 name, password, proxy = random.choice(names), random.choice(passwords), random.choice(self.proxies)
-                threading.Thread(target=self.threaded_gen, args=(name, password, proxy, output_path)).start()
+                threading.Thread(target=self.threaded_gen, args=(name, str(random.choice(passwords) + random.choice(passwords) + "&/$!"), proxy, output_path)).start()
             time.sleep(2)
         log(self.websocket_url, "[DONE] Done generating all accounts")
 
@@ -570,7 +566,7 @@ class Liker:
         #Logging to server
         try: requests.post(f"{server}/liker", json={"amount": len(combos)}, proxies=urllib.request.getproxies())
         except: pass
-        if any(self.proxies): threading.Thread(target=self.proxy_pool).start() #Spawning ProxyPool on Port 8899
+        if any(self.proxies): threading.Thread(target=General.proxy_pool, args=(self,)).start() #Spawning ProxyPool on Port 8899
         while self.count < len(combos):
             for i in range(int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads):
                 combo = combos[i]
@@ -579,20 +575,9 @@ class Liker:
                 else: threading.Thread(target=self.threaded_liker, args=(combo,))
         log(self.websocket_url, "[DONE] Done liking with all accounts")
 
-    def proxy_pool(self):
-        log(self.websocket_url, "[PROXY] Spawning ProxyPool")
-        proxy_pool = []
-        for proxie in self.proxies: proxy_pool.extend(["--proxy-pool", proxie])
-        try:
-            with proxy.Proxy(["--log-level", "e", "--plugins" , "proxy.plugin.ProxyPoolPlugin", *proxy_pool]) as p:
-                proxy.sleep_loop()
-        except Exception as e: log(self.websocket_url, f"[ERROR] Couldnt spawn ProxyPool (Error: {str(e)})"); print(traceback.format_exc())
-
     def threaded_liker(self, combo):
-        try:
-            user, pw, rest =  combo.split(":", 2)
-        except:
-            user, pw = combo.split(":")
+        username, password = General.combo_split(combo)
+        if not username: log(self.websocket_url, f"[ERROR] There was an error with the Combo: {combo}"); return
         options = Options()
         for item in ["--headless", "--no-sandbox", "--disable-dev-shm-usage", '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36', '--no-sandbox', '--log-level=3', '--lang=en', "--window-size=1920,1080", "--mute-audio"]:
             options.add_argument(item)
@@ -639,7 +624,7 @@ class Checker:
         #Logging to server
         try: requests.post(f"{server}/checker", json={"amount": len(combos)}, proxies=urllib.request.getproxies())
         except: pass
-        if any(self.proxies): threading.Thread(target=self.proxy_pool).start() #Spawning ProxyPool on Port 8899
+        if any(self.proxies): threading.Thread(target=General.proxy_pool, args=(self,)).start() #Spawning ProxyPool on Port 8899
         while self.count < len(combos):
             threadz = range(int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads)
             for i in threadz:
@@ -650,20 +635,9 @@ class Checker:
         log(self.websocket_url, f"[VALID] {self.valid} / [INVALID] {self.count - self.valid}")
         log(self.websocket_url, "[DONE] Done checking with all accounts")
 
-    def proxy_pool(self):
-        log(self.websocket_url, "[PROXY] Spawning ProxyPool")
-        proxy_pool = []
-        for proxie in self.proxies: proxy_pool.extend(["--proxy-pool", proxie])
-        try:
-            with proxy.Proxy(["--log-level", "e", "--plugins" , "proxy.plugin.ProxyPoolPlugin", *proxy_pool]) as p:
-                proxy.sleep_loop()
-        except Exception as e: log(self.websocket_url, f"[ERROR] Couldnt spawn ProxyPool (Error: {str(e)})"); print(traceback.format_exc())
-
     def threaded_checker(self, combo):
-        try:
-            user, pw, rest =  combo.split(":", 2)
-        except:
-            user, pw = combo.split(":")
+        username, password = General.combo_split(combo)
+        if not username: log(self.websocket_url, f"[ERROR] There was an error with the Combo: {combo}"); return
         options = Options()
         l = ['--log-level=3', '--lang=en', "--window-size=1920,1080", "--mute-audio", "--log-level=3", "disable-logging"]
         if any(self.proxies): l.append('--proxy-server="localhost:8899"')
@@ -672,8 +646,8 @@ class Checker:
         options.ignore_protected_mode_settings = True
         driver = wd.Chrome(service=Service(self.driver_exe), options=options)
         driver.get("https://accounts.spotify.com/en/login")
-        driver.find_element(By.ID, "login-username").send_keys(user)
-        driver.find_element(By.ID, "login-password").send_keys(pw)
+        driver.find_element(By.ID, "login-username").send_keys(username)
+        driver.find_element(By.ID, "login-password").send_keys(password)
         driver.find_element(By.ID, "login-button").click()
         for _ in range(self.max):
             time.sleep(1)
@@ -707,16 +681,12 @@ class MailChecker:
         log(self.websocket_url, "[DONE] Done checking with all accounts")
 
     def threaded_checker(self, combo):
-        try:
-            user, pw, rest =  combo.split(":", 2)
-        except:
-            try:
-                user, pw = combo.split(":")
-            except: user = combo
+        username, password = General.combo_split(combo)
+        if not username: log(self.websocket_url, f"[ERROR] There was an error with the Combo: {combo}"); return
 
         prox = random.choice(self.proxies)
         proxy = {"https": f"http://{prox}", "http": f"http://{prox}"} if any(self.proxies) else {}
-        if requests.post("https://spclient.wg.spotify.com/signup/public/v1/account", params={'validate': '1', 'email': user}, proxies=proxy).json()["status"] == 20:
+        if requests.post("https://spclient.wg.spotify.com/signup/public/v1/account", params={'validate': '1', 'email': username}, proxies=proxy).json()["status"] == 20:
             log(self.websocket_url, f"[VALID] {combo}")
             self.valid += 1
         else: log(self.websocket_url, f"[INVALID] {combo}")
@@ -725,7 +695,7 @@ class MailChecker:
 class DesktopStreamer:
     def __init__(self, combo_path, threads, proxies, link, max, like, follow, mute, pos, webhook, path):
         pos = 0 if not pos else pos
-        self.threads, self.start_time = int(threads) if threads else 10, time.time()
+        self.threads, self.start_time, self.running = int(threads) if threads else 10, time.time(), 0
         self.combo_path, self.max, self.like, self.follow, self.mute, self.pos = combo_path.replace('"', ""), int(max) if max else 5, int(like) if like else 0, int(follow) if follow else 0, mute if mute else True, int(int(pos) if int(pos) else 1) + 1
         self.proxies, self.webhook_url, self.websocket_url = proxies.split("\r\n"), webhook, path
         self.spotify_path = str(str(os.getenv('APPDATA')) + "\\Spotify\\")
@@ -735,51 +705,8 @@ class DesktopStreamer:
         self.streamed, self.stream_failed, self.stream_current_failed, self.streaming, self.likes, self.current_streaming = 0, 0, 0, 0, 0, False
         self.streams_mins, self.streaming_mins, self.like_mins = [], [], []
         #Checking and Modifying Installations
-        if not self.check_installations(): return
-        self.set_spotify()
-
-    def check_installations(self):
-        if not os.path.isdir(self.spotify_path):
-            log(self.websocket_url, "[INSTALLATION] You have to install Spotify!")
-            webbrowser.open("https://www.spotify.com/download/windows/")
-            return False
-        if not os.path.isdir("C:\Sandbox"):
-            log(self.websocket_url, "[INSTALLATION] You have to install Sandboxie!")
-            webbrowser.open("https://github.com/sandboxie-plus/Sandboxie/releases/download/1.0.22/Sandboxie-Classic-x64-v5.55.22.exe")
-            return False
-        return True
-
-    def set_spotify(self):
-        #Setting Language to English
-        log(self.websocket_url, "[SETUP] Setting Spotifys Preferences!")
-        with open(f"{self.spotify_path}prefs", "r") as f:
-            words = ['language="en"' if "language" in word else word for word in f.read().splitlines()]
-            words = ["" if "autologin" in word else word for word in words]
-            words = ["" if "network" in word else word for word in words]
-            open(f"{self.spotify_path}prefs", "w").close()
-            with open(f"{self.spotify_path}prefs", 'w') as f:
-                for item in words: f.write("%s\n" % item)
-        #Deleting all users
-        log(self.websocket_url, "[SETUP] Deleting Spotify Users!")
-        try:
-            roaming_path = str(self.spotify_path.replace("Roaming", "Local"))
-            shutil.rmtree(str(roaming_path + "\\Users"))
-            newpath = str(roaming_path + "\\Users")
-            if not os.path.exists(newpath): os.makedirs(newpath)
-        except: log(self.websocket_url, "[WARNING] Couldnt delete Spotify Users!")
-        #Deleting all sandboxes
-        log(self.websocket_url, "[SETUP] Deleting Mjolnir-Sandboxes!")
-        try:
-            subfolders = [f.path for f in os.scandir("C:\Sandbox") if f.is_dir()]
-            for folder in [f.path for f in os.scandir(subfolders[0]) if f.is_dir()]:
-                if "Mjolnir" in str(folder):
-                    os.chmod(folder, 0o777)
-                    shutil.rmtree(folder) #os.remove(folder)
-        except Exception as e: log(self.websocket_url, "[WARNING] Couldnt delete Sandboxes! (You have to run the .exe with Admin Permissions)")
-
-    def kill_spotify(self):
-        try: subprocess.check_call(["TASKKILL", "/F", "/IM", "spotify.exe"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-        except: pass
+        if not General.check_installations(self): return
+        General.set_spotify(self)
 
     def streamer(self):
         #Local Values
@@ -789,18 +716,21 @@ class DesktopStreamer:
         try: requests.post(f"{server}/streamer/desktop", json={"amount": len(combo)}, proxies=urllib.request.getproxies())
         except: pass
         combo = [x for x in combo if x]
-        if any(self.proxies): threading.Thread(target=self.proxy_pool).start() #Spawning ProxyPool on Port 8899
+        if any(self.proxies): threading.Thread(target=General.proxy_pool, args=(self,)).start() #Spawning ProxyPool on Port 8899
         else: log(self.websocket_url, "[PROXY] No proxy server will be used")
         if self.webhook_url: threading.Thread(target=self.threaded_webhook).start()
 
 
         while count < combo_len:
+            while self.running != 0:
+                time.sleep(5)
             self.current_failed, self.waiting = 0, 0
             log(self.websocket_url, "[SPOTIFY] Killing all instances")
-            self.kill_spotify()
+            # General.kill_spotify(self)
             time.sleep(2)
             ports = []
             self.threadz = range(int(combo_len - count) if int(combo_len - count) <= self.threads else self.threads)
+            self.running = int(combo_len - count) if int(combo_len - count) <= self.threads else self.threads
             for i in self.threadz:
                 while True:
                     r_port = random.randint(19000, 19900)
@@ -811,10 +741,10 @@ class DesktopStreamer:
                 for line in open("C:\Windows\Sandboxie.ini", "r").read().splitlines(): better_lines.append(''.join(ch for ch in line if ch.isalnum()))
                 if any(boks in better_line for better_line in better_lines):
                     try: subprocess.call(f'{Start} /box:{boks} delete_sandbox', False); subprocess.call(f"{SbieIni} set {boks} Enabled n", False); subprocess.call(f"{SbieIni} set {boks} Enabled y", False)
-                    except: log(self.websocket_url, "[ERROR] You have to run the .exe with Admin Permissions"); return False
+                    except: log(self.websocket_url, "[ERROR] You have to run the .py with Admin Permissions"); return False
                 else:
                     try: subprocess.call(f"{SbieIni} set {boks} Enabled y", False)
-                    except: log(self.websocket_url, "[ERROR] You have to run the .exe with Admin Permissions"); return False
+                    except: log(self.websocket_url, "[ERROR] You have to run the .py with Admin Permissions"); return False
                 subprocess.call('"C:\Program Files\Sandboxie\Start.exe"  /reload', False)
                 if any(self.proxies): subprocess.call(f'"C:\Program Files\Sandboxie\Start.exe" /box:{boks} "{self.spotify_path}Spotify.exe" --mute-audio --remote-debugging-port={r_port} --proxy-server="localhost:8899"', False)
                 else: subprocess.call(f'"C:\Program Files\Sandboxie\Start.exe" /box:{boks} "{self.spotify_path}Spotify.exe" --mute-audio --remote-debugging-port={r_port}', False)
@@ -827,19 +757,10 @@ class DesktopStreamer:
                 current_combo.append(combo[i])
                 count += 1
             for comb in current_combo: combo.remove(comb)
-        self.kill_spotify()
+        # General.kill_spotify(self)
         self.current_streaming = False
         log(self.websocket_url, "[DONE] Done streaming with all accounts")
         if self.webhook_url: self.webhook(int(int(time.time() - self.start_time)/60), 'Mjolnir is done Streaming!')
-
-    def proxy_pool(self):
-        log(self.websocket_url, "[PROXY] Spawning ProxyPool")
-        proxy_pool = []
-        for proxie in self.proxies: proxy_pool.extend(["--proxy-pool", proxie])
-        try:
-            with proxy.Proxy(["--log-level", "e", "--plugins" , "proxy.plugin.ProxyPoolPlugin", *proxy_pool]) as p:
-                proxy.sleep_loop()
-        except Exception as e: log(self.websocket_url, f"[ERROR] Couldnt spawn ProxyPool (Error: {str(e)})")#; import traceback; print(traceback.format_exc())
 
     def inject_js(self, ws, text, i):
         if i == 0:
@@ -853,6 +774,8 @@ class DesktopStreamer:
             ws.send(json.dumps(payload))
 
     def threaded_streamer(self, combo, port, like, wait):
+        username, password = General.combo_split(combo)
+        if not username: log(self.websocket_url, f"[ERROR] There was an error with the Combo: {combo}"); return
         wsUrl = requests.get(f"http://localhost:{port}/json").json()[0]["webSocketDebuggerUrl"]
         ws = websocket.create_connection(wsUrl)
         try: self.inject_js(ws, "login-button", 0)
@@ -862,10 +785,10 @@ class DesktopStreamer:
         for i in range(10):
             payload = {"id": 162, "method": "Input.dispatchKeyEvent", "params": {"type": "keyDown", "modifiers": 2, "code": "Back", "key":"Back", "windowsVirtualKeyCode": 8, "nativeVirtualKeyCode": 8, "autoRepeat": False, "isKeypad": False, "isSystemKey": False}}
             ws.send(json.dumps(payload))
-        self.inject_js(ws, combo.split(":")[0], 1)
+        self.inject_js(ws, username, 1)
         payload = {"id": 162, "method": "Input.dispatchKeyEvent", "params": {"type": "keyDown", "modifiers": 0, "code": "Tab", "key":"Tab", "windowsVirtualKeyCode": 9, "nativeVirtualKeyCode": 9, "autoRepeat": False, "isKeypad": False, "isSystemKey": False}}
         ws.send(json.dumps(payload))
-        self.inject_js(ws, combo.split(":")[1], 1)
+        self.inject_js(ws, password, 1)
         self.inject_js(ws, "login-button", 0)
         time.sleep(4)
         title = requests.get(f"http://localhost:{port}/json").json()[0]["title"]
@@ -873,13 +796,12 @@ class DesktopStreamer:
             log(self.websocket_url, f"[ERROR] Couldnt login: {combo}")
             self.stream_failed += 1
             self.stream_current_failed += 1
+            General.close_spotify(ws)
             return
         if self.mute:
             time.sleep(2)
             payload = {"id":1337, "method":"Runtime.evaluate", "params":{"expression": 'document.querySelectorAll("[aria-describedby=volume-icon]")[0].click()'}}
             ws.send(json.dumps(payload))
-            # payload = {"id":1337, "method":"Runtime.evaluate", "params":{"expression": 'document.querySelectorAll("[data-testid=volume-bar]")[0].children[0].click()'}}
-            # ws.send(json.dumps(payload))
             time.sleep(2)
         for url in random.sample(self.links, k=len(self.links)):
             ea = '"/search"'
@@ -892,9 +814,6 @@ class DesktopStreamer:
             payload = {"id":1,"method":"Input.dispatchKeyEvent","params": {"type":"char","modifiers":0,"code":"Enter","key":"Enter","windowsVirtualKeyCode":13,"nativeVirtualKeyCode":13,"autoRepeat":False,"isKeypad":False,"isSystem":False, "text": "\r", "unmodifiedText": "\r"}}
             ws.send(json.dumps(payload))
             time.sleep(2)
-            # ea = '"action-bar-row"'
-            # payload = {"id":1337, "method":"Runtime.evaluate", "params":{"expression": f"document.querySelectorAll('[data-testid={ea}]')[0].children[0].click()"}}
-            # ws.send(json.dumps(payload))
             for i in range(-(-self.pos//2)+1):
                 payload = {"id":1337, "method":"Input.emulateTouchFromMouseEvent", "params":{"button": "none", "clickCount": 0, "deltaX": 0, "deltaY": -153.24323918368367, "modifiers": 0, "type": "mouseWheel", "x": 493, "y": 190}}
                 ws.send(json.dumps(payload))
@@ -928,9 +847,8 @@ class DesktopStreamer:
         log(self.websocket_url, f"[DONE] Account done streaming: {combo}")
         self.streamed += 1
         self.streaming -= 1
-        payload = {"id":1,"method":"Browser.crash"}
-        try: ws.send(json.dumps(payload))
-        except: pass
+        self.running -= 1
+        General.close_spotify(ws)
         return
 
     def webhook(self, runtime, title):
@@ -1022,50 +940,32 @@ class WebStreamer:
 
     def streamer(self):
         combos = open(self.combo_path, "r").read().splitlines()
-        #Logging to serverq
+        #Logging to server
         try: requests.post(f"{server}/streamer/web", json={"amount": len(combos)}, proxies=urllib.request.getproxies())
         except: pass
-        if any(self.proxies): threading.Thread(target=self.proxy_pool).start() #Spawning ProxyPool on Port 8899
+        if any(self.proxies): threading.Thread(target=General.proxy_pool, args=(self,)).start() #Spawning ProxyPool on Port 8899
         for combo in combos:
             threadz = int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads
             if not int(combos.index(combo) + 1) % threadz:
                 self.threaded_streamer(combo)
             else:
                 threading.Thread(target=self.threaded_streamer, args=(combo,)).start()
-        # while self.count < len(combos):
-        #     for i in range(int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads):
-        #         combo = combos[i]
-        #         if i == range(int(len(combos) - self.count) if int(len(combos) - self.count) <= self.threads else self.threads)[-1]:
-        #             self.threaded_streamer(combo)
-        #         else: threading.Thread(target=self.threaded_streamer, args=(combo,)).start()
         log(self.websocket_url, "[DONE] Done streaming with all accounts")
 
-    def proxy_pool(self):
-        log(self.websocket_url, "[PROXY] Spawning ProxyPool")
-        proxy_pool = []
-        for proxie in self.proxies: proxy_pool.extend(["--proxy-pool", proxie])
-        try:
-            with proxy.Proxy(["--log-level", "e", "--plugins" , "proxy.plugin.ProxyPoolPlugin", *proxy_pool]) as p:
-                proxy.sleep_loop()
-        except Exception as e: log(self.websocket_url, f"[ERROR] Couldnt spawn ProxyPool (Error: {str(e)})"); import traceback; print(traceback.format_exc())
-
     def threaded_streamer(self, combo):
-        try:
-            user, pw, rest =  combo.split(":", 2)
-        except:
-            user, pw = combo.split(":")
+        username, password = General.combo_split(combo)
+        if not username: log(self.websocket_url, f"[ERROR] There was an error with the Combo: {combo}"); return
         options = Options()
         l = ['--log-level=3', '--lang=en', "--window-size=1920,1080", "--mute-audio", "--log-level=3", "disable-logging"]
         if any(self.proxies): l.append('--proxy-server="localhost:8899"')
-        for item in l:
-            options.add_argument(item)
+        for item in l: options.add_argument(item)
         options.ignore_protected_mode_settings = True
         driver = wd.Chrome(service=Service(self.driver_exe), options=options)
         driver.get("https://accounts.spotify.com/login")
         time.sleep(3)
-        driver.find_element(By.ID, "login-username").send_keys(user)
+        driver.find_element(By.ID, "login-username").send_keys(username)
         time.sleep(1)
-        driver.find_element(By.ID, "login-password").send_keys(pw)
+        driver.find_element(By.ID, "login-password").send_keys(password)
         time.sleep(1)
         driver.find_element(By.ID, "login-button").click()
         i=0
@@ -1073,38 +973,26 @@ class WebStreamer:
             try: driver.find_element(By.ID, "login-button").click()
             except: pass
             time.sleep(2)
-            if "status" in driver.current_url:
-                break
+            if "status" in driver.current_url: break
             i+=1
         else:
-            if i == 15:
-                log(self.websocket_url, f"[ERROR] Couldnt login: {combo}")
-                driver.quit()
-                return
+            if i == 15: log(self.websocket_url, f"[ERROR] Couldnt login: {combo}"); driver.quit(); return
         time.sleep(5)
         try: driver.find_element(By.ID, "onetrust-accept-btn-handler").click()
         except: pass
         for url in random.sample(self.links, k=len(self.links)):
             driver.get(url)
             for _ in range(15):
-                try:
-                    driver.execute_script('document.querySelector("[data-testid=play-button]").click()')
-                    break
-                except:
-                    time.sleep(2)
-            else:
-                log(self.websocket_url, f"[ERROR] Couldnt stream with account: {combo}")
-                driver.quit()
-                return
+                try: driver.execute_script('document.querySelector("[data-testid=play-button]").click()'); break
+                except: time.sleep(2)
+            else: log(self.websocket_url, f"[ERROR] Couldnt stream with account: {combo}"); driver.quit(); return
 
             if any(random.choices([1,0], [self.like/100, int(100-self.like)/100])):
                 play_buttons = driver.find_elements(By.XPATH, "//button[@data-testid='add-button']")
                 for _, button in enumerate(play_buttons):
                     if _ == 0:
-                        try:
-                            button.click()
-                        except ElementClickInterceptedException:
-                            pass
+                        try: button.click()
+                        except ElementClickInterceptedException: pass
                 log(self.websocket_url, f"[SUCCESS] Account successfully liked: {combo}")
             time.sleep(5)
             driver.minimize_window()
@@ -1216,7 +1104,7 @@ def run_general(ea):
 
 if __name__ == '__main__':
     #Check Version from Server and open Download Url if not newest
-    myversion = "1.0.6"
+    myversion = "1.0.7"
     version = requests.get("https://raw.githubusercontent.com/Vinyzu/MjolnirAiO/main/README.md").text.split("Mjolnir-v")[1].split("-")[0]
     if myversion != version: PySimpleGUI.Popup('There is a newer version of Mjolnir!', background_color='#111', button_color="#818181",  no_titlebar=True, font=('Monaco Monospace', 11)); webbrowser.open("https://github.com/Vinyzu/MjolnirAiO")
     multiprocessing.freeze_support()

@@ -2,6 +2,17 @@
 
 Every new change will be logged
 
+## v1.0.7
+```
++ Updated Generator.html, Request-Buttons overwrote Desktop-Buttons (for example the Desktop Proxy Button didnt work)
++ Added a General-Class, for functions that are used multiple times (reduces lines of code)
++ Added new Desktop-Spotify self-killing function (to avoid closing threads if the main call has an error)
++ Fixxed the Request-Passwords, before sometimes the Password was to short
++ Fixxed the .exe Loggings (was coded for Selling as .exe, now is .py)
++ Fixxed Username-Password splitting everywhere (Now you can also leave the :name at the end)
++ Some unnecessary lines were removed and some indentations cleaned up
+```
+
 ## v1.0.6
 ```
 + Fixxed Like Probability (Liked every time before)
