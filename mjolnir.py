@@ -196,7 +196,13 @@ class DesktopGenerator:
         email = f"{rand}@gmail.com"
         time.sleep(5)
         # Connect with Websocket to DebugUrl to Inject Javascript
-        wsUrl = requests.get(f"http://localhost:{port}/json").json()[0]["webSocketDebuggerUrl"]
+        try:
+            wsUrl = requests.get(f"http://localhost:{port}/json").json()[0]["webSocketDebuggerUrl"]
+        except:
+            for i in range(10):
+                try: wsUrl = requests.get(f"http://localhost:{port}/json").json()[0]["webSocketDebuggerUrl"]; break
+                except: time.sleep(2)
+            else: log(self.websocket_url, "[ERROR] Couldn´t connect to Spotify!"); General.close_spotify(ws); return
         ws = websocket.create_connection(wsUrl)
         # Clicking Register Button
         self.inject_js(ws, "signup-link", 0)
@@ -776,7 +782,13 @@ class DesktopStreamer:
     def threaded_streamer(self, combo, port, like, wait):
         username, password = General.combo_split(combo)
         if not username: log(self.websocket_url, f"[ERROR] There was an error with the Combo: {combo}"); return
-        wsUrl = requests.get(f"http://localhost:{port}/json").json()[0]["webSocketDebuggerUrl"]
+        try:
+            wsUrl = requests.get(f"http://localhost:{port}/json").json()[0]["webSocketDebuggerUrl"]
+        except:
+            for i in range(10):
+                try: wsUrl = requests.get(f"http://localhost:{port}/json").json()[0]["webSocketDebuggerUrl"]; break
+                except: time.sleep(2)
+            else: log(self.websocket_url, "[ERROR] Couldn´t connect to Spotify!"); General.close_spotify(ws); return
         ws = websocket.create_connection(wsUrl)
         try: self.inject_js(ws, "login-button", 0)
         except: pass
